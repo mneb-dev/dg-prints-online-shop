@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/plus-jakarta-sans";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Plus Jakarta Sans Variable', sans-serif;
+    --shadow-soft: 0 4px 20px -2px oklch(from var(--primary) l c h / 12%);
+    --shadow-elevated: 0 10px 25px -5px oklch(from var(--primary) l c h / 18%), 0 8px 10px -6px oklch(from var(--primary) l c h / 12%);
+    --shadow-button: 0 4px 14px 0 oklch(from var(--primary) l c h / 32%);
+    --color-brand-to: var(--brand-to);
+    --color-brand-from: var(--brand-from);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --color-status-info: var(--status-info);
+    --color-status-progress: var(--status-progress);
+    --color-status-ready: var(--status-ready);
+    --color-status-success: var(--status-success);
+    --color-status-warning: var(--status-warning);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: oklch(0.984 0.003 247.858);
+    --foreground: oklch(0.208 0.042 265.755);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.208 0.042 265.755);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.208 0.042 265.755);
+    --primary: oklch(0.511 0.262 276.966);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.968 0.007 247.896);
+    --secondary-foreground: oklch(0.279 0.041 260.031);
+    --muted: oklch(0.968 0.007 247.896);
+    --muted-foreground: oklch(0.554 0.046 257.417);
+    --accent: oklch(0.93 0.034 272.788);
+    --accent-foreground: oklch(0.457 0.24 277.023);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(0.929 0.013 255.508);
+    --input: oklch(0.929 0.013 255.508);
+    --ring: oklch(0.585 0.233 277.117);
+    --brand-from: var(--primary);
+    --brand-to: oklch(0.541 0.281 293.009);
+    --status-info: oklch(0.48 0.12 219);
+    --status-progress: oklch(0.65 0.18 55);
+    --status-ready: oklch(0.65 0.14 205);
+    --status-success: oklch(0.63 0.18 145);
+    --status-warning: oklch(0.71 0.18 75);
+    --radius: 0.5rem;
+    color-scheme: light;
+}
+
+.dark {
+    --background: oklch(0.17 0.026 265.755);
+    --foreground: oklch(0.96 0.006 247.896);
+    --card: oklch(0.223 0.028 265.755);
+    --card-foreground: oklch(0.96 0.006 247.896);
+    /* One step above card, so menus/dialogs separate from the cards beneath them. */
+    --popover: oklch(0.25 0.03 265.755);
+    --popover-foreground: oklch(0.96 0.006 247.896);
+    --primary: oklch(0.673 0.182 276.935);
+    --primary-foreground: oklch(0.129 0.042 264.695);
+    --secondary: oklch(0.279 0.041 260.031);
+    --secondary-foreground: oklch(0.96 0.006 247.896);
+    --muted: oklch(0.279 0.041 260.031);
+    --muted-foreground: oklch(0.704 0.04 256.788);
+    --accent: oklch(0.359 0.144 278.697);
+    --accent-foreground: oklch(0.87 0.065 274.039);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.673 0.182 276.935);
+    --brand-from: var(--primary);
+    --brand-to: oklch(0.702 0.183 293.541);
+    --status-info: oklch(0.68 0.13 219);
+    --status-progress: oklch(0.74 0.17 55);
+    --status-ready: oklch(0.75 0.13 205);
+    --status-success: oklch(0.75 0.17 145);
+    --status-warning: oklch(0.8 0.16 75);
+    /* Elevation in the dark: brand-tinted shadows glow instead of lifting, so surfaces get black
+       depth plus a faint top-lit hairline. Only CTAs keep a (softer) brand glow. Overrides the
+       light values set in @theme — every consumer reads these via var(), so this is enough. */
+    --shadow-soft: 0 1px 2px oklch(0 0 0 / 40%), 0 4px 16px -4px oklch(0 0 0 / 45%);
+    --shadow-elevated: 0 12px 28px -6px oklch(0 0 0 / 60%), 0 0 0 1px oklch(1 0 0 / 6%);
+    --shadow-button: 0 4px 14px 0 oklch(from var(--primary) l c h / 25%);
+    color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    }
+  /* Touch: no grey flash on tap, and no double-tap-zoom delay on controls. */
+  html {
+    -webkit-tap-highlight-color: transparent;
+    }
+  a, button, input, select, textarea, label, summary, [role="button"], [role="tab"], [role="option"], [role="menuitem"], [role="checkbox"], [role="switch"] {
+    touch-action: manipulation;
+    }
+  /* Set by ThemeSync for the frame the `dark` class flips, so the whole UI swaps at once instead
+     of every button/card easing its colors on its own timer. */
+  [data-theme-switching] *,
+  [data-theme-switching] *::before,
+  [data-theme-switching] *::after {
+    transition: none !important;
+    }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent) transparent;
+    }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+    }
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--muted-foreground);
+    }
+}
+
+@layer utilities {
+  .bg-brand-gradient {
+    background-image: linear-gradient(135deg, var(--brand-from), var(--brand-to));
+  }
+  .text-brand-gradient {
+    background-image: linear-gradient(135deg, var(--brand-from), var(--brand-to));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+}
