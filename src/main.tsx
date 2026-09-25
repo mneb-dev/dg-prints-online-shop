@@ -14,7 +14,8 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Provider store={store}>
         <ThemeSync />
-        <Toaster />
+        {/* Lifted above the mobile action bar (MobileActionBar); harmless spacing on desktop. */}
+        <Toaster offset={{ bottom: 88 }} mobileOffset={{ bottom: 88 }} />
         <App />
       </Provider>
     </BrowserRouter>

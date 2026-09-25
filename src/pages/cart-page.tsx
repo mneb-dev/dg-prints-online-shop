@@ -1,30 +1,99 @@
-import { ArrowLeftIcon, InfoIcon, ShoppingBagIcon, Trash2Icon } from "lucide-react"
+import { useState } from "react"
+import { ArrowLeftIcon, ArrowRightIcon, InfoIcon, PencilIcon, PlusIcon, ShoppingBagIcon, Trash2Icon } from "lucide-react"
 import { Link } from "react-router-dom"
 
+import { MobileActionBar } from "@/components/mobile-action-bar"
 import { ProductVisual } from "@/components/product-image"
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { QuantityInput } from "@/components/ui/quantity-input"
 import { Separator } from "@/components/ui/separator"
-import { lineTotal, useCart, type CartLine } from "@/lib/cart"
-import { unitSuffix } from "@/lib/pricing-resolver"
+import { Textarea } from "@/components/ui/textarea"
+import { MAX_NOTE_LENGTH, lineTotal, useCart, type CartLine } from "@/lib/cart"
+import { itemDetails } from "@/lib/messenger"
 import { formatCurrency, pluralize } from "@/lib/utils"
 
-function lineDetails(line: CartLine): string[] {
-  const details = line.selectedOptions.map((option) => `${option.name}: ${option.value}`)
-  if (line.pricing?.packageName && !line.selectedOptions.some((option) => option.value === line.pricing?.packageName)) {
-    details.push(`Package: ${line.pricing.packageName}`)
+/** "Add note" link, or the saved note with an edit button; expands to a textarea that saves on blur. */
+function LineNote({ line }: { line: CartLine }) {
+  const { setNote } = useCart()
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(line.note)
+
+  function startEditing() {
+    setDraft(line.note)
+    setEditing(true)
   }
-  if (line.pricing?.width && line.pricing.height) {
-    details.push(`Size: ${line.pricing.width} × ${line.pricing.height} ft`)
+
+  function save() {
+    setNote(line.key, draft)
+    setEditing(false)
   }
-  return details
+
+  if (editing) {
+    return (
+      <div className="mt-2 flex flex-col gap-1.5">
+        <Textarea
+          autoFocus
+          aria-label={`Note for ${line.productName}`}
+          value={draft}
+          maxLength={MAX_NOTE_LENGTH}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={save}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setDraft(line.note)
+              setEditing(false)
+            }
+          }}
+          placeholder="e.g. name to print, colors, when you need it"
+          className="max-h-40 min-h-16 text-sm"
+        />
+        <p className="flex justify-between gap-2 text-xs text-muted-foreground">
+          <span>Saved when you click away.</span>
+          <span className="tabular-nums">
+            {draft.length}/{MAX_NOTE_LENGTH}
+          </span>
+        </p>
+      </div>
+    )
+  }
+
+  if (line.note) {
+    return (
+      <div className="mt-2 flex items-start gap-1 rounded-lg bg-muted/60 px-2.5 py-1.5 text-sm">
+        <p className="min-w-0 flex-1 whitespace-pre-line break-words">
+          <span className="font-medium">Note: </span>
+          {line.note}
+        </p>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={`Edit note for ${line.productName}`}
+          onClick={startEditing}
+          className="-my-1 -mr-1.5 shrink-0 text-muted-foreground"
+        >
+          <PencilIcon />
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={startEditing}
+      className="mt-1.5 inline-flex min-h-8 cursor-pointer items-center gap-1 rounded-md text-sm font-medium text-primary outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
+      <PlusIcon className="size-3.5" />
+      Add note
+    </button>
+  )
 }
 
 function CartLineItem({ line }: { line: CartLine }) {
   const { setQuantity, removeLine } = useCart()
   const total = lineTotal(line)
-  const details = lineDetails(line)
+  const details = itemDetails(line)
 
   return (
     <li className="flex gap-4 py-5 first:pt-0 last:pb-0">
@@ -49,16 +118,16 @@ function CartLineItem({ line }: { line: CartLine }) {
               ))}
             </ul>
           )}
-          <p className="mt-1 text-sm text-muted-foreground tabular-nums">
-            {line.pricing ? (
-              <>
-                {formatCurrency(line.pricing.unitPrice)}
-                {unitSuffix(line.pricing)}
-              </>
-            ) : (
-              "Price on request"
-            )}
-          </p>
+          {/* Plain unit price, no units. Size-priced lines skip it: a bare per-sq.ft. price would
+              read as a wrong total, and the line total on the right covers it. */}
+          {!line.pricing ? (
+            <p className="mt-1 text-sm text-muted-foreground">Price on request</p>
+          ) : (
+            !line.pricing.width && (
+              <p className="mt-1 text-sm text-muted-foreground tabular-nums">{formatCurrency(line.pricing.unitPrice)}</p>
+            )
+          )}
+          <LineNote line={line} />
         </div>
         <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
           <p className="order-2 font-semibold tabular-nums sm:order-1">
@@ -126,7 +195,12 @@ function OrderSummary() {
           : "Final price is confirmed by DG Prints when your order is processed."}
       </p>
       <div className="flex flex-col gap-2">
-        <Button variant="outline" size="lg" className="h-11" render={<Link to="/shop" />} nativeButton={false}>
+        {/* Below lg this button lives in MobileCheckoutBar instead. */}
+        <Button variant="gradient" size="lg" className="hidden h-11 lg:inline-flex" render={<Link to="/checkout" />} nativeButton={false}>
+          Proceed to checkout
+          <ArrowRightIcon />
+        </Button>
+        <Button variant="ghost" size="lg" className="h-11" render={<Link to="/shop" />} nativeButton={false}>
           <ArrowLeftIcon />
           Continue shopping
         </Button>
@@ -136,6 +210,27 @@ function OrderSummary() {
         </Button>
       </div>
     </aside>
+  )
+}
+
+/** Estimated total + checkout, pinned to the bottom of the screen on mobile. */
+function MobileCheckoutBar() {
+  const { subtotal, itemCount, quoteLineCount } = useCart()
+
+  return (
+    <MobileActionBar>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-muted-foreground">
+          Estimated total · {pluralize(itemCount, "item")}
+          {quoteLineCount > 0 && " + quote"}
+        </p>
+        <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
+      </div>
+      <Button variant="gradient" size="lg" className="h-12 gap-2 px-5" render={<Link to="/checkout" />} nativeButton={false}>
+        Checkout
+        <ArrowRightIcon />
+      </Button>
+    </MobileActionBar>
   )
 }
 
@@ -175,6 +270,7 @@ export function CartPage() {
           </ul>
         </section>
         <OrderSummary />
+        <MobileCheckoutBar />
       </div>
     </div>
   )

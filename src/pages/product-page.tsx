@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import { ArrowLeftIcon, CheckIcon, InfoIcon, PackageXIcon, ShoppingBagIcon } from "lucide-react"
+import { ArrowLeftIcon, CheckIcon, InfoIcon, MessageCircleIcon, PackageXIcon, ShoppingBagIcon, XIcon } from "lucide-react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
+import { MobileActionBar } from "@/components/mobile-action-bar"
+import { OutOfStockBadge } from "@/components/product-card"
 import { ProductGallery } from "@/components/product-gallery"
+import { ProductVisual } from "@/components/product-image"
 import { StartingPrice } from "@/components/price-tag"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,17 +14,22 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { QuantityInput } from "@/components/ui/quantity-input"
-import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart"
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Textarea } from "@/components/ui/textarea"
+import { MAX_LINE_QUANTITY, MAX_NOTE_LENGTH, useCart } from "@/lib/cart"
 import { useCatalog } from "@/lib/catalog"
+import { announceCartAdded, flyToCart, isCompactViewport } from "@/lib/fly-to-cart"
+import { buildMadeToOrderMessage, openMessenger } from "@/lib/messenger"
 import {
   computeLineTotal,
   describeAppliesTo,
   isAreaPriced,
   isManualPricingProduct,
   resolvePricing,
-  unitSuffix,
   type LinePricing,
+  type PricingResolution,
 } from "@/lib/pricing-resolver"
+import { useShopSettings } from "@/lib/shop-settings"
 import type { PricingEntry, ShopProduct } from "@/lib/shop-types"
 import { cn, formatCurrency } from "@/lib/utils"
 
@@ -86,6 +94,150 @@ function parsePositive(value: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null
 }
 
+/** "Required" marker shown in the options sheet on choices the buyer still has to make. */
+function RequiredMark() {
+  return <span className="ml-1.5 text-xs font-medium text-destructive">Required</span>
+}
+
+type ConfigFieldsProps = {
+  product: ShopProduct
+  selected: Record<string, string>
+  onToggle: (optionId: string, value: string, required: boolean) => void
+  resolution: PricingResolution
+  entry: PricingEntry | undefined
+  onSelectPackage: (id: string) => void
+  areaPriced: boolean
+  width: string
+  height: string
+  onWidthChange: (value: string) => void
+  onHeightChange: (value: string) => void
+  unavailable: boolean
+  /** Keeps input ids unique while the same fields render inline and in the options sheet. */
+  idPrefix?: string
+  /** Mark still-missing required choices (used in the options sheet). */
+  showRequired?: boolean
+}
+
+/** Option chips, package tiers and size inputs — rendered inline on the page and in the options sheet,
+ *  both driven by the same ProductConfigurator state. */
+function ConfigFields({
+  product,
+  selected,
+  onToggle,
+  resolution,
+  entry,
+  onSelectPackage,
+  areaPriced,
+  width,
+  height,
+  onWidthChange,
+  onHeightChange,
+  unavailable,
+  idPrefix = "",
+  showRequired = false,
+}: ConfigFieldsProps) {
+  return (
+    <>
+      {product.options.map((option) => (
+        <fieldset key={option.id} className="flex flex-col gap-2.5">
+          <legend className="mb-2.5 text-sm font-semibold">
+            {option.name}
+            {!option.required && <span className="ml-1.5 font-normal text-muted-foreground">(optional)</span>}
+            {showRequired && option.required && !selected[option.id] && <RequiredMark />}
+          </legend>
+          <div className="flex flex-wrap gap-2">
+            {option.values.map((value) => (
+              <ChoiceChip
+                key={value}
+                selected={selected[option.id] === value}
+                onClick={() => onToggle(option.id, value, option.required)}
+              >
+                {value}
+              </ChoiceChip>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+
+      {resolution.kind === "package" && (
+        <fieldset className="flex flex-col">
+          <legend className="mb-2.5 text-sm font-semibold">
+            Package
+            {showRequired && !entry && <RequiredMark />}
+          </legend>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {resolution.candidates.map((candidate) => (
+              <PackageTierCard
+                key={candidate.id}
+                entry={candidate}
+                selected={candidate.id === entry?.id}
+                onSelect={() => onSelectPackage(candidate.id)}
+              />
+            ))}
+          </div>
+        </fieldset>
+      )}
+
+      {areaPriced && entry && (
+        <fieldset className="flex flex-col">
+          <legend className="mb-2.5 text-sm font-semibold">
+            Size <span className="font-normal text-muted-foreground">(in feet)</span>
+            {showRequired && (!parsePositive(width) || !parsePositive(height)) && <RequiredMark />}
+          </legend>
+          <div className="grid max-w-sm grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor={`${idPrefix}width`}>Width (ft)</Label>
+              <Input
+                id={`${idPrefix}width`}
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.5"
+                value={width}
+                onChange={(event) => onWidthChange(event.target.value)}
+                placeholder="e.g. 3"
+                className="h-10"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor={`${idPrefix}height`}>Height (ft)</Label>
+              <Input
+                id={`${idPrefix}height`}
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.5"
+                value={height}
+                onChange={(event) => onHeightChange(event.target.value)}
+                placeholder="e.g. 5"
+                className="h-10"
+              />
+            </div>
+          </div>
+        </fieldset>
+      )}
+
+      {unavailable && (
+        <p className="flex items-start gap-2 rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
+          <InfoIcon className="mt-0.5 size-4 shrink-0" />
+          This combination isn't available. Try a different option.
+        </p>
+      )}
+    </>
+  )
+}
+
+function QuantityField({ id, value, onChange }: { id: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id}>Quantity</Label>
+      <div className="w-40">
+        <QuantityInput id={id} value={value} onChange={onChange} className="h-10" />
+      </div>
+    </div>
+  )
+}
+
 function ProductConfigurator({ product }: { product: ShopProduct }) {
   const navigate = useNavigate()
   const { addLine } = useCart()
@@ -94,6 +246,8 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
   const [width, setWidth] = useState("")
   const [height, setHeight] = useState("")
   const [quantity, setQuantity] = useState("1")
+  const [note, setNote] = useState("")
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   const manual = isManualPricingProduct(product)
   const resolution = resolvePricing(product, selected)
@@ -114,6 +268,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
 
   const linePricing: LinePricing | null = entry
     ? {
+        pricingEntryId: entry.id,
         pricingType: entry.pricingType,
         unit: entry.unit,
         unitPrice: entry.price,
@@ -125,6 +280,10 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
   const canAdd = missingOptions.length === 0 && qtyValid && (manual || (!!linePricing && dimensionsReady))
   const total = linePricing && dimensionsReady && qtyValid ? computeLineTotal(linePricing, qty) : null
 
+  const selectedOptions = product.options
+    .filter((option) => selected[option.id])
+    .map((option) => ({ name: option.name, value: selected[option.id] }))
+
   function toggleOption(optionId: string, value: string, required: boolean) {
     setSelected((current) => {
       const next = { ...current }
@@ -134,22 +293,44 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
     })
   }
 
-  function handleAdd() {
+  /** `source` is the tapped button; on mobile the product flies from it to the cart icon. */
+  function handleAdd(source?: HTMLElement) {
     if (!canAdd) return
-    addLine({
+    const line = {
       productId: product.id,
       productName: product.name,
       category: product.category,
       imageUrl: product.images[0]?.url,
-      selectedOptions: product.options
-        .filter((option) => selected[option.id])
-        .map((option) => ({ name: option.name, value: selected[option.id] })),
+      selectedOptions,
       pricing: manual ? null : linePricing,
       quantity: qty,
-    })
-    toast.success(`${product.name} added to cart`, {
-      action: { label: "View cart", onClick: () => navigate("/cart") },
-    })
+      note,
+    }
+    setNote("")
+    setSheetOpen(false)
+
+    function commit() {
+      addLine(line)
+      toast.success(`${product.name} added to cart`, {
+        action: { label: "View cart", onClick: () => navigate("/cart") },
+      })
+    }
+
+    if (source && isCompactViewport()) {
+      // Add as it lands, so the badge ticks up (and the cart icon bumps) when the product "arrives".
+      void flyToCart({ from: source, imageUrl: line.imageUrl }).then(() => {
+        commit()
+        announceCartAdded()
+      })
+      return
+    }
+    commit()
+  }
+
+  // Mobile bar: add straight away when the choice is complete, otherwise ask for what's missing.
+  function handleMobileAdd(event: React.MouseEvent<HTMLElement>) {
+    if (canAdd) handleAdd(event.currentTarget)
+    else setSheetOpen(true)
   }
 
   let hint: string | null = null
@@ -158,97 +339,36 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
   else if (areaPriced && !dimensionsReady) hint = "Enter your width and height"
   else if (!qtyValid) hint = "Enter a quantity of at least 1"
 
+  const fieldProps = {
+    product,
+    selected,
+    onToggle: toggleOption,
+    resolution,
+    entry,
+    onSelectPackage: setPackageId,
+    areaPriced,
+    width,
+    height,
+    onWidthChange: setWidth,
+    onHeightChange: setHeight,
+    unavailable,
+  }
+
+  // Plain "₱50 × 2" — the shop shows prices without units, so area-priced items just show the total.
+  const priceBreakdown = entry && total !== null && !areaPriced && qty > 1 && (
+    <p className="text-xs text-muted-foreground tabular-nums">
+      {formatCurrency(entry.price)} × {qty}
+    </p>
+  )
+
   return (
     <div className="flex flex-col gap-6">
-      {product.options.map((option) => (
-        <fieldset key={option.id} className="flex flex-col gap-2.5">
-          <legend className="mb-2.5 text-sm font-semibold">
-            {option.name}
-            {!option.required && <span className="ml-1.5 font-normal text-muted-foreground">(optional)</span>}
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {option.values.map((value) => (
-              <ChoiceChip
-                key={value}
-                selected={selected[option.id] === value}
-                onClick={() => toggleOption(option.id, value, option.required)}
-              >
-                {value}
-              </ChoiceChip>
-            ))}
-          </div>
-        </fieldset>
-      ))}
+      <ConfigFields {...fieldProps} />
+      <QuantityField id="quantity" value={quantity} onChange={setQuantity} />
+      <NoteField value={note} onChange={setNote} />
 
-      {resolution.kind === "package" && (
-        <fieldset className="flex flex-col">
-          <legend className="mb-2.5 text-sm font-semibold">Package</legend>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {resolution.candidates.map((candidate) => (
-              <PackageTierCard
-                key={candidate.id}
-                entry={candidate}
-                selected={candidate.id === entry?.id}
-                onSelect={() => setPackageId(candidate.id)}
-              />
-            ))}
-          </div>
-        </fieldset>
-      )}
-
-      {areaPriced && entry && (
-        <fieldset className="flex flex-col">
-          <legend className="mb-2.5 text-sm font-semibold">
-            Size <span className="font-normal text-muted-foreground">(in feet · {formatCurrency(entry.price)} / sq.ft.)</span>
-          </legend>
-          <div className="grid max-w-sm grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="width">Width (ft)</Label>
-              <Input
-                id="width"
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.5"
-                value={width}
-                onChange={(event) => setWidth(event.target.value)}
-                placeholder="e.g. 3"
-                className="h-10"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="height">Height (ft)</Label>
-              <Input
-                id="height"
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.5"
-                value={height}
-                onChange={(event) => setHeight(event.target.value)}
-                placeholder="e.g. 5"
-                className="h-10"
-              />
-            </div>
-          </div>
-        </fieldset>
-      )}
-
-      {unavailable && (
-        <p className="flex items-start gap-2 rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
-          <InfoIcon className="mt-0.5 size-4 shrink-0" />
-          This combination isn't available. Try a different option.
-        </p>
-      )}
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="quantity">Quantity</Label>
-        <div className="w-40">
-          <QuantityInput id="quantity" value={quantity} onChange={setQuantity} className="h-10" />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
+      {/* Desktop keeps the button inline; below lg it lives in the MobileActionBar. */}
+      <div className="hidden gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] lg:flex lg:items-center lg:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{manual ? "Price" : "Total"}</p>
           {manual ? (
@@ -258,25 +378,152 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
           ) : (
             <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
           )}
-          {entry && total !== null && (
-            <p className="text-xs text-muted-foreground tabular-nums">
-              {formatCurrency(entry.price)}
-              {unitSuffix(entry)}
-              {areaPriced && widthFt && heightFt && ` × ${widthFt * heightFt} sq.ft.`} × {qty}
-            </p>
-          )}
+          {priceBreakdown}
         </div>
-        <Button variant="gradient" size="lg" className="h-11 gap-2 px-5 pointer-coarse:h-12" disabled={!canAdd} onClick={handleAdd}>
+        <Button variant="gradient" size="lg" className="h-11 gap-2 px-5" disabled={!canAdd} onClick={() => handleAdd()}>
           <ShoppingBagIcon className="size-4" />
           Add to cart
         </Button>
       </div>
       {manual && (
-        <p className="-mt-3 text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground lg:-mt-3">
           We'll confirm the price for this item with you after you send your order.
         </p>
       )}
+
+      <MobileActionBar>
+        <div className="min-w-0 flex-1">
+          {manual ? (
+            <p className="font-semibold">Price on request</p>
+          ) : total !== null ? (
+            <>
+              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+            </>
+          ) : (
+            <StartingPrice product={product} />
+          )}
+        </div>
+        <Button variant="gradient" size="lg" className="h-12 gap-2 px-6" onClick={handleMobileAdd}>
+          <ShoppingBagIcon className="size-4" />
+          Add to cart
+        </Button>
+      </MobileActionBar>
+
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent
+          side="bottom"
+          showCloseButton={false}
+          className="max-h-[85svh] gap-0 rounded-t-2xl p-0 duration-300 ease-out data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full motion-reduce:transition-none"
+        >
+          <div aria-hidden className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" />
+          <SheetHeader className="flex-row items-center gap-3 border-b border-border px-4 pt-2 pb-4">
+            <ProductVisual
+              url={product.images[0]?.url}
+              alt={product.name}
+              category={product.category}
+              className="size-14 shrink-0 rounded-lg"
+              iconClassName="size-6"
+            />
+            <div className="min-w-0 flex-1">
+              <SheetTitle className="truncate text-base font-semibold">{product.name}</SheetTitle>
+              <SheetDescription>Choose your options</SheetDescription>
+            </div>
+            <SheetClose render={<Button variant="ghost" size="icon-sm" className="self-start" />}>
+              <XIcon />
+              <span className="sr-only">Close</span>
+            </SheetClose>
+          </SheetHeader>
+
+          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-4 py-5">
+            <ConfigFields {...fieldProps} idPrefix="sheet-" showRequired />
+            <QuantityField id="sheet-quantity" value={quantity} onChange={setQuantity} />
+          </div>
+
+          <div className="flex items-center gap-3 border-t border-border px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="min-w-0 flex-1">
+              {manual ? (
+                <p className="font-semibold">Price on request</p>
+              ) : total !== null ? (
+                <>
+                  <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+                  {priceBreakdown}
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
+              )}
+            </div>
+            <Button variant="gradient" size="lg" className="h-12 gap-2 px-6" disabled={!canAdd} onClick={(event) => handleAdd(event.currentTarget)}>
+              <ShoppingBagIcon className="size-4" />
+              Add to cart
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
+  )
+}
+
+function NoteField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor="note">
+        Notes <span className="font-normal text-muted-foreground">(optional)</span>
+      </Label>
+      <Textarea
+        id="note"
+        value={value}
+        maxLength={MAX_NOTE_LENGTH}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="e.g. name to print, colors, when you need it"
+        className="max-h-40 min-h-20"
+      />
+      <p className="text-right text-xs text-muted-foreground tabular-nums">
+        {value.length}/{MAX_NOTE_LENGTH}
+      </p>
+    </div>
+  )
+}
+
+/** Made-to-order product: no options, quantity, notes or cart — the buyer messages us on Facebook
+ *  and staff settle the details and price in the chat. */
+function MadeToOrderPanel({ product }: { product: ShopProduct }) {
+  const { messengerUrl, isLoading } = useShopSettings()
+
+  async function handleMessage() {
+    if (!messengerUrl) return
+    const copied = await openMessenger(messengerUrl, buildMadeToOrderMessage(product.name))
+    if (copied) toast.success("Message copied. Paste it in Messenger if it isn't filled in.")
+  }
+
+  return (
+    <>
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="font-semibold">Made to order</p>
+          <p className="text-sm text-muted-foreground">
+            {messengerUrl || isLoading
+              ? "Message us to confirm the details and price."
+              : "Please contact DG Prints to order this item."}
+          </p>
+        </div>
+        {messengerUrl && (
+          // Below lg this button lives in the MobileActionBar instead.
+          <Button variant="gradient" size="lg" className="hidden h-11 gap-2 px-5 lg:inline-flex" onClick={handleMessage}>
+            <MessageCircleIcon className="size-4" />
+            Message us on Facebook
+          </Button>
+        )}
+      </div>
+      {messengerUrl && (
+        <MobileActionBar>
+          <Button variant="gradient" size="lg" className="h-12 flex-1 gap-2" onClick={handleMessage}>
+            <MessageCircleIcon className="size-4" />
+            Message us on Facebook
+          </Button>
+        </MobileActionBar>
+      )}
+    </>
   )
 }
 
@@ -336,13 +583,25 @@ export function ProductPage() {
         <ProductGallery key={product.id} product={product} className="lg:sticky lg:top-24 lg:self-start" />
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <Badge variant="secondary">{product.category}</Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="secondary">{product.category}</Badge>
+              {!product.inStock && <OutOfStockBadge />}
+            </div>
             <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{product.name}</h1>
             {product.description && <p className="text-muted-foreground">{product.description}</p>}
             <StartingPrice product={product} className="text-lg" />
           </div>
           {/* Keyed so switching products resets every choice. */}
-          <ProductConfigurator key={product.id} product={product} />
+          {!product.inStock ? (
+            <p className="flex items-start gap-2 rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+              <InfoIcon className="mt-0.5 size-4 shrink-0" />
+              This item is out of stock right now. Please check back later.
+            </p>
+          ) : product.madeToOrder ? (
+            <MadeToOrderPanel key={product.id} product={product} />
+          ) : (
+            <ProductConfigurator key={product.id} product={product} />
+          )}
         </div>
       </div>
     </div>

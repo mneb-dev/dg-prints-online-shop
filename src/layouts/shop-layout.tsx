@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { ShoppingBagIcon } from "lucide-react"
 import { Link, NavLink, Outlet } from "react-router-dom"
 
@@ -5,16 +6,26 @@ import { Logo } from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { useCart } from "@/lib/cart"
+import { CART_ADDED_EVENT } from "@/lib/fly-to-cart"
 import { cn } from "@/lib/utils"
 
 function CartButton() {
   const { itemCount } = useCart()
   const label = itemCount === 0 ? "Cart, empty" : `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`
+  // Bumped when a mobile add-to-cart lands (see lib/fly-to-cart); the key restarts the animation.
+  const [bump, setBump] = useState(0)
+
+  useEffect(() => {
+    const onAdded = () => setBump(Date.now())
+    window.addEventListener(CART_ADDED_EVENT, onAdded)
+    return () => window.removeEventListener(CART_ADDED_EVENT, onAdded)
+  }, [])
 
   return (
     <NavLink
       to="/cart"
       aria-label={label}
+      data-cart-target
       className={({ isActive }) =>
         cn(
           "relative inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
@@ -22,7 +33,7 @@ function CartButton() {
         )
       }
     >
-      <ShoppingBagIcon className="size-5" />
+      <ShoppingBagIcon key={bump} className={cn("size-5", bump > 0 && "animate-cart-bump motion-reduce:animate-none")} />
       {itemCount > 0 && (
         <span
           key={itemCount}

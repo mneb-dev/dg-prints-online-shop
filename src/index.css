@@ -6,6 +6,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    /* Cart icon "catches" a product flown in by lib/fly-to-cart. */
+    --animate-cart-bump: cart-bump 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    @keyframes cart-bump {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.35) rotate(-8deg); }
+      65% { transform: scale(0.92) rotate(4deg); }
+      100% { transform: scale(1); }
+    }
     --font-heading: var(--font-sans);
     --font-sans: 'Plus Jakarta Sans Variable', sans-serif;
     --shadow-soft: 0 4px 20px -2px oklch(from var(--primary) l c h / 12%);
@@ -124,6 +132,12 @@
     @apply font-sans;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    }
+  /* Room for the fixed MobileActionBar (below lg) so it never covers the end of the page. */
+  @media (width < 64rem) {
+    body:has([data-mobile-action-bar]) {
+      padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+      }
     }
   /* Touch: no grey flash on tap, and no double-tap-zoom delay on controls. */
   html {

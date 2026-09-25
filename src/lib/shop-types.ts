@@ -47,7 +47,18 @@ export type ShopProduct = {
   options: ProductOption[]
   pricing: PricingEntry[]
   images: ProductImage[]
+  /** Customized per buyer: shows "Message us on Facebook" instead of options + "Add to cart",
+   *  and never goes in the cart. */
+  madeToOrder: boolean
+  /** False when DG Prints marked it unavailable — still listed, shown as "Out of stock", can't be ordered. */
+  inStock: boolean
   createdAt: string
+}
+
+/** Public storefront settings from `/api/shop/settings`. */
+export type ShopSettings = {
+  /** "" when DG Prints hasn't configured one. */
+  messengerUrl: string
 }
 
 export type Paginated<T> = {

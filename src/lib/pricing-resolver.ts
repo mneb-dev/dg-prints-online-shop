@@ -56,6 +56,9 @@ export function startingPrice(product: ShopProduct): PricingEntry | undefined {
 }
 
 export type LinePricing = {
+  /** The product pricing entry this line was priced with, so checkout can re-check it. Missing on
+   *  carts saved before checkout existed (the server then matches by type/package/price). */
+  pricingEntryId?: string
   pricingType: PricingEntry["pricingType"]
   unit: PricingEntry["unit"]
   unitPrice: number

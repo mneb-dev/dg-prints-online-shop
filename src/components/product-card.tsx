@@ -4,6 +4,7 @@ import { ProductVisual } from "@/components/product-image"
 import { StartingPrice } from "@/components/price-tag"
 import { Badge } from "@/components/ui/badge"
 import type { ShopProduct } from "@/lib/shop-types"
+import { cn } from "@/lib/utils"
 
 export function ProductCard({ product }: { product: ShopProduct }) {
   const optionSummary = product.options.map((option) => option.name).join(" · ")
@@ -13,13 +14,17 @@ export function ProductCard({ product }: { product: ShopProduct }) {
       to={`/shop/${product.id}`}
       className="group/product flex flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-[var(--shadow-soft)] transition-[translate,box-shadow] outline-none hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)] focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
-      <div className="aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
         <ProductVisual
           url={product.images[0]?.url}
           alt={product.name}
           category={product.category}
-          className="size-full transition-transform duration-300 group-hover/product:scale-105 motion-reduce:transition-none"
+          className={cn(
+            "size-full transition-transform duration-300 group-hover/product:scale-105 motion-reduce:transition-none",
+            !product.inStock && "opacity-60 grayscale"
+          )}
         />
+        {!product.inStock && <OutOfStockBadge className="absolute top-2 left-2" />}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
         <Badge variant="secondary" className="max-w-full truncate">
@@ -36,6 +41,14 @@ export function ProductCard({ product }: { product: ShopProduct }) {
         <StartingPrice product={product} />
       </div>
     </Link>
+  )
+}
+
+export function OutOfStockBadge({ className }: { className?: string }) {
+  return (
+    <Badge variant="secondary" className={cn("bg-foreground text-background", className)}>
+      Out of stock
+    </Badge>
   )
 }
 

@@ -2,8 +2,10 @@ import { useMemo } from "react"
 
 import {
   MAX_LINE_QUANTITY,
+  MAX_NOTE_LENGTH,
   cartCleared,
   lineAdded,
+  lineNoteSet,
   lineQuantitySet,
   lineRemoved,
   type CartLine,
@@ -13,7 +15,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import { computeLineTotal } from "@/lib/pricing-resolver"
 
-export { MAX_LINE_QUANTITY, type CartLine, type NewCartLine, type SelectedOption }
+export { MAX_LINE_QUANTITY, MAX_NOTE_LENGTH, type CartLine, type NewCartLine, type SelectedOption }
 
 /** null for a price-on-request line. */
 export function lineTotal(line: CartLine): number | null {
@@ -43,6 +45,7 @@ export function useCart() {
     ...summary,
     addLine: (line: NewCartLine) => dispatch(lineAdded(line)),
     setQuantity: (key: string, quantity: number) => dispatch(lineQuantitySet({ key, quantity })),
+    setNote: (key: string, note: string) => dispatch(lineNoteSet({ key, note })),
     removeLine: (key: string) => dispatch(lineRemoved(key)),
     clear: () => dispatch(cartCleared()),
   }
