@@ -1,4 +1,4 @@
-# DG Prints Online Shop
+# DG Prints
 
 Public storefront for DG Prints. Sibling of `dg-prints-management-portal` (staff app) and
 `dg-prints-management-server` (API), sharing the portal's stack and design tokens:
