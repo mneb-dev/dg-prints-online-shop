@@ -1,7 +1,7 @@
 import { ArrowLeftIcon, InfoIcon, ShoppingBagIcon, Trash2Icon } from "lucide-react"
 import { Link } from "react-router-dom"
 
-import { CategoryTile } from "@/components/category-visual"
+import { ProductVisual } from "@/components/product-image"
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { QuantityInput } from "@/components/ui/quantity-input"
@@ -29,7 +29,13 @@ function CartLineItem({ line }: { line: CartLine }) {
   return (
     <li className="flex gap-4 py-5 first:pt-0 last:pb-0">
       <Link to={`/shop/${line.productId}`} className="shrink-0 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-        <CategoryTile category={line.category} className="size-20 rounded-lg sm:size-24" iconClassName="size-8" />
+        <ProductVisual
+          url={line.imageUrl}
+          alt={line.productName}
+          category={line.category}
+          className="size-20 rounded-lg sm:size-24"
+          iconClassName="size-8"
+        />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">

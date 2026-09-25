@@ -3,7 +3,7 @@ import { ArrowLeftIcon, CheckIcon, InfoIcon, PackageXIcon, ShoppingBagIcon } fro
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 
-import { CategoryTile } from "@/components/category-visual"
+import { ProductGallery } from "@/components/product-gallery"
 import { StartingPrice } from "@/components/price-tag"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -140,6 +140,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
       productId: product.id,
       productName: product.name,
       category: product.category,
+      imageUrl: product.images[0]?.url,
       selectedOptions: product.options
         .filter((option) => selected[option.id])
         .map((option) => ({ name: option.name, value: selected[option.id] })),
@@ -331,11 +332,8 @@ export function ProductPage() {
         Back to shop
       </Link>
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-        <CategoryTile
-          category={product.category}
-          className="aspect-[4/3] w-full rounded-2xl shadow-[var(--shadow-elevated)] lg:sticky lg:top-24 lg:aspect-square lg:self-start"
-          iconClassName="size-20 sm:size-24"
-        />
+        {/* Keyed so switching products starts on the new product's main image. */}
+        <ProductGallery key={product.id} product={product} className="lg:sticky lg:top-24 lg:self-start" />
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <Badge variant="secondary">{product.category}</Badge>

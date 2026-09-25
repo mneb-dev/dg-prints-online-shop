@@ -46,8 +46,8 @@ function hash(text: string): number {
   return value
 }
 
-/** Placeholder product visual until products carry real images: a gradient tile with the
- *  category's icon. */
+/** Fallback product visual for products without images (see ProductVisual), and the category
+ *  art on the landing page: a gradient tile with the category's icon. */
 export function CategoryTile({
   category,
   className,

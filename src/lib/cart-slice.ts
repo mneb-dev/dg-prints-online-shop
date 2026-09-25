@@ -13,6 +13,8 @@ export type CartLine = {
   productId: string
   productName: string
   category: string
+  /** Main image at the time it was added. Optional: carts persisted before images existed lack it. */
+  imageUrl?: string
   selectedOptions: SelectedOption[]
   /** null for a "price on request" product (no pricing entries) — excluded from the total. */
   pricing: LinePricing | null

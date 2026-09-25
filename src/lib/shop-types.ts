@@ -33,6 +33,12 @@ export type PricingEntry = {
   unit: PricingUnit
 }
 
+/** A product photo; the first in `ShopProduct.images` is the main one. */
+export type ProductImage = {
+  id: string
+  url: string
+}
+
 export type ShopProduct = {
   id: string
   name: string
@@ -40,6 +46,7 @@ export type ShopProduct = {
   description: string
   options: ProductOption[]
   pricing: PricingEntry[]
+  images: ProductImage[]
   createdAt: string
 }
 

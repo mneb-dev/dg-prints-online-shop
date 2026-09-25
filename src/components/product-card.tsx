@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-import { CategoryTile } from "@/components/category-visual"
+import { ProductVisual } from "@/components/product-image"
 import { StartingPrice } from "@/components/price-tag"
 import { Badge } from "@/components/ui/badge"
 import type { ShopProduct } from "@/lib/shop-types"
@@ -13,11 +13,14 @@ export function ProductCard({ product }: { product: ShopProduct }) {
       to={`/shop/${product.id}`}
       className="group/product flex flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-[var(--shadow-soft)] transition-[translate,box-shadow] outline-none hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)] focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
-      <CategoryTile
-        category={product.category}
-        className="aspect-[4/3] w-full"
-        iconClassName="transition-transform duration-300 group-hover/product:scale-110 motion-reduce:transition-none"
-      />
+      <div className="aspect-[4/3] w-full overflow-hidden">
+        <ProductVisual
+          url={product.images[0]?.url}
+          alt={product.name}
+          category={product.category}
+          className="size-full transition-transform duration-300 group-hover/product:scale-105 motion-reduce:transition-none"
+        />
+      </div>
       <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
         <Badge variant="secondary" className="max-w-full truncate">
           {product.category}
