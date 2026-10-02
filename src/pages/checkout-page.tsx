@@ -357,7 +357,7 @@ export function CheckoutPage() {
               ? "Items marked “Quote” aren't included — we'll confirm their price with you. "
               : ""}
             {needsPayment
-              ? "You'll pay securely with GCash or Maya through PayMongo."
+              ? "You'll pay securely online through PayMongo."
               : "No payment now: we'll message or call you to confirm your order and payment."}
           </p>
           <Button type="submit" variant="gradient" size="lg" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
