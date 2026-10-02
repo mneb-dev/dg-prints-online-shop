@@ -32,12 +32,30 @@ type CartState = {
 
 export type NewCartLine = Omit<CartLine, "key" | "addedAt">
 
+/**
+ * What makes two cart lines "the same item": product, chosen options, package and size — not the
+ * price. Prices change (e.g. the shop's convenience fee), and re-adding the same item afterwards
+ * should still bump the existing line's quantity rather than add a second line. Lines saved with an
+ * older key format are matched by recomputing this, never by their stored `key`.
+ */
 export function cartLineKey(line: Pick<CartLine, "productId" | "selectedOptions" | "pricing">): string {
   const options = line.selectedOptions.map((option) => `${option.name}=${option.value}`).join("|")
   const pricing = line.pricing
-    ? `${line.pricing.packageName ?? ""}|${line.pricing.unitPrice}|${line.pricing.width ?? ""}x${line.pricing.height ?? ""}`
+    ? `${line.pricing.packageName ?? ""}|${line.pricing.width ?? ""}x${line.pricing.height ?? ""}`
     : "manual"
   return `${line.productId}::${options}::${pricing}`
+}
+
+/** Merges `incoming` into `target` (same item): adds the quantity, keeps both notes, and takes the
+ *  newer price/name/image, since the newer add reflects what the shop shows now. */
+function mergeInto(target: CartLine, incoming: Pick<CartLine, "quantity" | "note" | "pricing" | "productName" | "imageUrl">) {
+  target.quantity = clampQuantity(target.quantity + incoming.quantity)
+  // Notes aren't part of the line's identity — keep both when they differ.
+  const note = cleanNote(incoming.note)
+  if (note && note !== target.note) target.note = cleanNote(target.note ? `${target.note}\n${note}` : note)
+  target.pricing = incoming.pricing
+  target.productName = incoming.productName
+  if (incoming.imageUrl) target.imageUrl = incoming.imageUrl
 }
 
 function clampQuantity(quantity: number): number {
@@ -72,7 +90,15 @@ function getInitialLines(): CartLine[] {
     const raw = localStorage.getItem(CART_STORAGE_KEY)
     if (!raw) return []
     const parsed: unknown = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed.filter(isCartLine).map(normalizeLine) : []
+    if (!Array.isArray(parsed)) return []
+    // Also folds together duplicates saved before price stopped being part of a line's identity.
+    const lines: CartLine[] = []
+    for (const line of parsed.filter(isCartLine).map(normalizeLine)) {
+      const same = lines.find((candidate) => cartLineKey(candidate) === cartLineKey(line))
+      if (same) mergeInto(same, line)
+      else lines.push(line)
+    }
+    return lines
   } catch {
     // Storage blocked or corrupt — start with an empty cart.
     return []
@@ -89,12 +115,9 @@ const cartSlice = createSlice({
   reducers: {
     lineAdded(state, action: PayloadAction<NewCartLine>) {
       const key = cartLineKey(action.payload)
-      const existing = state.lines.find((line) => line.key === key)
+      const existing = state.lines.find((line) => cartLineKey(line) === key)
       if (existing) {
-        existing.quantity = clampQuantity(existing.quantity + action.payload.quantity)
-        // Notes aren't part of the line's identity — keep both when they differ.
-        const note = cleanNote(action.payload.note)
-        if (note && note !== existing.note) existing.note = cleanNote(existing.note ? `${existing.note}\n${note}` : note)
+        mergeInto(existing, action.payload)
         return
       }
       state.lines.push({
