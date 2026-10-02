@@ -1,6 +1,6 @@
-import { useRef, useState } from "react"
-import { AlertCircleIcon, ArrowLeftIcon, ChevronDownIcon, LockIcon, TruckIcon, UserIcon } from "lucide-react"
-import { Link, Navigate, useNavigate } from "react-router-dom"
+import { useEffect, useRef, useState } from "react"
+import { AlertCircleIcon, ArrowLeftIcon, ChevronDownIcon, InfoIcon, LockIcon, TruckIcon, UserIcon, XIcon } from "lucide-react"
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 
 import { MobileActionBar } from "@/components/mobile-action-bar"
 import { ProductVisual } from "@/components/product-image"
@@ -92,6 +92,21 @@ export function CheckoutPage() {
   const [touched, setTouched] = useState<Partial<Record<FieldKey, boolean>>>({})
   const [submitError, setSubmitError] = useState<PlaceOrderError | null>(null)
   const honeypotRef = useRef<HTMLInputElement>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const paymentCancelled = searchParams.get("payment") === "cancelled"
+  const [redirecting, setRedirecting] = useState(false)
+  // A cart with a "Quote" item has no final total, so it's ordered without paying (staff quote it).
+  const needsPayment = quoteLineCount === 0
+
+  // Coming back from PayMongo with the browser's Back button can restore this page from the
+  // back/forward cache with the button still stuck on "Redirecting…".
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) setRedirecting(false)
+    }
+    window.addEventListener("pageshow", onPageShow)
+    return () => window.removeEventListener("pageshow", onPageShow)
+  }, [])
 
   if (lineCount === 0) return <Navigate to="/cart" replace />
 
@@ -119,7 +134,7 @@ export function CheckoutPage() {
 
   async function handleSubmit(event?: React.FormEvent) {
     event?.preventDefault()
-    if (submitting) return
+    if (busy) return
     setTouched(Object.fromEntries(FIELDS.map((key) => [key, true])))
     const firstError = FIELDS.find((key) => errors[key])
     if (firstError) {
@@ -132,9 +147,15 @@ export function CheckoutPage() {
     setSubmitError(null)
     try {
       const trimmed = Object.fromEntries(FIELDS.map((key) => [key, form[key].trim()])) as CheckoutForm
-      const placed = await placeOrder(trimmed, lines, honeypotRef.current?.value ?? "")
+      const result = await placeOrder(trimmed, lines, honeypotRef.current?.value ?? "")
       saveCheckoutForm(trimmed)
-      navigate("/checkout/success", { replace: true, state: placed })
+      if (result.kind === "payment") {
+        // The cart stays until the payment is confirmed, so cancelling on PayMongo loses nothing.
+        setRedirecting(true)
+        window.location.assign(result.checkoutUrl)
+        return
+      }
+      navigate("/checkout/success", { replace: true, state: { orderNumber: result.orderNumber, total: result.total } })
     } catch (err) {
       setSubmitError(err as PlaceOrderError)
       window.scrollTo({ top: 0, behavior: "smooth" })
@@ -142,8 +163,15 @@ export function CheckoutPage() {
   }
 
   // Clickable before everything is filled in, so a tap shows what's missing instead of doing nothing.
-  const canSubmit = !!shipping && !submitting
-  const submitLabel = submitting ? "Placing order…" : "Place order"
+  const busy = submitting || redirecting
+  const canSubmit = !!shipping && !busy
+  const submitLabel = needsPayment
+    ? busy
+      ? "Redirecting to payment…"
+      : "Continue to payment"
+    : busy
+      ? "Placing order…"
+      : "Place order"
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
@@ -155,6 +183,24 @@ export function CheckoutPage() {
         Back to cart
       </Link>
       <h1 className="mb-6 text-3xl font-bold tracking-tight">Checkout</h1>
+
+      {paymentCancelled && !submitError && (
+        <div role="status" className="mb-6 flex items-start gap-3 rounded-xl border border-border bg-muted/50 p-4 text-sm">
+          <InfoIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+          <p className="flex-1">
+            <span className="font-medium">Payment cancelled.</span>{" "}
+            <span className="text-muted-foreground">Your cart is still here — no order was placed.</span>
+          </p>
+          <button
+            type="button"
+            aria-label="Dismiss"
+            onClick={() => setSearchParams({}, { replace: true })}
+            className="-m-1 rounded-md p-1 text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <XIcon className="size-4" />
+          </button>
+        </div>
+      )}
 
       {submitError && (
         <div role="alert" className="mb-6 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
@@ -310,10 +356,12 @@ export function CheckoutPage() {
             {quoteLineCount > 0
               ? "Items marked “Quote” aren't included — we'll confirm their price with you. "
               : ""}
-            No payment now: we'll message or call you to confirm your order and payment.
+            {needsPayment
+              ? "You'll pay securely with GCash or Maya through PayMongo."
+              : "No payment now: we'll message or call you to confirm your order and payment."}
           </p>
           <Button type="submit" variant="gradient" size="lg" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
-            {submitting ? <Spinner /> : <LockIcon />}
+            {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>
         </aside>
@@ -324,7 +372,7 @@ export function CheckoutPage() {
             <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
           </div>
           <Button type="submit" variant="gradient" size="lg" className="h-12 gap-2 px-5" disabled={!canSubmit}>
-            {submitting ? <Spinner /> : <LockIcon />}
+            {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>
         </MobileActionBar>

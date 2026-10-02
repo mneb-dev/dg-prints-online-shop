@@ -27,6 +27,18 @@ export type CheckoutForm = {
 
 export type PlacedOrder = { orderNumber: string; total: number }
 
+/** `POST /api/shop/orders`: a cart with a "Quote" line is ordered right away (pay later); any other
+ *  cart is paid first on PayMongo's hosted page, and the order is only created once it's paid. */
+export type PlaceOrderResult =
+  | ({ kind: "order" } & PlacedOrder)
+  | { kind: "payment"; checkoutId: string; checkoutUrl: string }
+
+/** `GET /api/shop/checkouts/:id` — where a PayMongo payment stands, polled after the buyer returns. */
+export type CheckoutStatus =
+  | ({ status: "paid" } & PlacedOrder)
+  | { status: "pending"; checkoutUrl: string; total: number }
+  | { status: "expired" }
+
 /** Why placing the order failed. `lineKey` points at the cart line the server rejected (removed
  *  product, changed price…), so the page can say which one to fix. */
 export type PlaceOrderError = { message: string; lineKey?: string }
@@ -56,12 +68,12 @@ export const fetchShipping = createAsyncThunk<ShippingInfo, void, { rejectValue:
 )
 
 export const placeOrder = createAsyncThunk<
-  PlacedOrder,
+  PlaceOrderResult,
   { form: CheckoutForm; lines: CartLine[]; website: string },
   { rejectValue: PlaceOrderError }
 >("checkout/placeOrder", async ({ form, lines, website }, { rejectWithValue }) => {
   try {
-    const { data } = await apiClient.post<PlacedOrder>("/shop/orders", {
+    const { data } = await apiClient.post<PlaceOrderResult>("/shop/orders", {
       customer: { name: form.name, phone: form.phone },
       address: { street: form.street, barangay: form.barangay, city: form.city, province: form.province, zip: form.zip },
       // Prices are sent only so the server can spot changes — it recalculates everything itself.

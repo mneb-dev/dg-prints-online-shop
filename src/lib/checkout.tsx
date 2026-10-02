@@ -1,10 +1,13 @@
 import { useCallback, useEffect } from "react"
 
+import { apiClient } from "@/lib/api-client"
 import {
   fetchShipping,
   placeOrder,
   type CheckoutForm,
+  type CheckoutStatus,
   type PlacedOrder,
+  type PlaceOrderResult,
   type PlaceOrderError,
   type Province,
   type ShippingInfo,
@@ -13,7 +16,16 @@ import {
 import type { CartLine } from "@/lib/cart-slice"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 
-export type { CheckoutForm, PlacedOrder, PlaceOrderError, Province, ShippingInfo, ShippingRegion }
+export type {
+  CheckoutForm,
+  CheckoutStatus,
+  PlacedOrder,
+  PlaceOrderError,
+  PlaceOrderResult,
+  Province,
+  ShippingInfo,
+  ShippingRegion,
+}
 
 export const REGION_LABELS: Record<ShippingRegion, string> = {
   luzon: "Luzon",
@@ -68,7 +80,7 @@ export function useCheckout() {
   }, [dispatch, shipping.status])
 
   const submit = useCallback(
-    async (form: CheckoutForm, lines: CartLine[], website: string): Promise<PlacedOrder> =>
+    async (form: CheckoutForm, lines: CartLine[], website: string): Promise<PlaceOrderResult> =>
       dispatch(placeOrder({ form, lines, website })).unwrap(),
     [dispatch]
   )
@@ -80,4 +92,10 @@ export function useCheckout() {
     submitting,
     placeOrder: submit,
   }
+}
+
+/** Where a PayMongo checkout stands (paid → the order exists). */
+export async function fetchCheckoutStatus(checkoutId: string): Promise<CheckoutStatus> {
+  const { data } = await apiClient.get<CheckoutStatus>(`/shop/checkouts/${encodeURIComponent(checkoutId)}`)
+  return data
 }
