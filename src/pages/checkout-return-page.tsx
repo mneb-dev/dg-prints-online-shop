@@ -87,6 +87,20 @@ export function CheckoutReturnPage() {
             </Button>
           </div>
         </>
+      ) : view.kind === "status" && view.status === "failed" ? (
+        <>
+          <XCircleIcon className="mb-6 size-12 text-destructive" />
+          <h1 className="text-2xl font-bold tracking-tight">Payment wasn't completed</h1>
+          <p className="mt-2 text-muted-foreground">
+            The payment was cancelled or didn't go through, so you weren't charged and no order was placed. Your cart
+            is still here — you can try again.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button variant="gradient" size="lg" className="h-11 px-6" render={<Link to="/checkout" />} nativeButton={false}>
+              Back to checkout
+            </Button>
+          </div>
+        </>
       ) : (
         <>
           <XCircleIcon className="mb-6 size-12 text-destructive" />

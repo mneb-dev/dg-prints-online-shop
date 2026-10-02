@@ -2,10 +2,12 @@ import { useCallback, useEffect } from "react"
 
 import { apiClient } from "@/lib/api-client"
 import {
+  fetchPaymentMethods,
   fetchShipping,
   placeOrder,
   type CheckoutForm,
   type CheckoutStatus,
+  type PaymentMethodOption,
   type PlacedOrder,
   type PlaceOrderResult,
   type PlaceOrderError,
@@ -19,6 +21,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 export type {
   CheckoutForm,
   CheckoutStatus,
+  PaymentMethodOption,
   PlacedOrder,
   PlaceOrderError,
   PlaceOrderResult,
@@ -73,15 +76,20 @@ export function saveCheckoutForm(form: CheckoutForm) {
 export function useCheckout() {
   const dispatch = useAppDispatch()
   const shipping = useAppSelector((state) => state.checkout.shipping)
+  const paymentMethods = useAppSelector((state) => state.checkout.paymentMethods)
   const submitting = useAppSelector((state) => state.checkout.submitStatus === "submitting")
 
   useEffect(() => {
     if (shipping.status === "idle") void dispatch(fetchShipping())
   }, [dispatch, shipping.status])
 
+  useEffect(() => {
+    if (paymentMethods.status === "idle") void dispatch(fetchPaymentMethods())
+  }, [dispatch, paymentMethods.status])
+
   const submit = useCallback(
-    async (form: CheckoutForm, lines: CartLine[], website: string): Promise<PlaceOrderResult> =>
-      dispatch(placeOrder({ form, lines, website })).unwrap(),
+    async (form: CheckoutForm, lines: CartLine[], website: string, paymentMethod?: string): Promise<PlaceOrderResult> =>
+      dispatch(placeOrder({ form, lines, website, paymentMethod })).unwrap(),
     [dispatch]
   )
 
@@ -89,6 +97,9 @@ export function useCheckout() {
     shipping: shipping.data,
     shippingStatus: shipping.status,
     retryShipping: () => dispatch(fetchShipping()),
+    paymentMethods: paymentMethods.data,
+    paymentMethodsStatus: paymentMethods.status,
+    retryPaymentMethods: () => dispatch(fetchPaymentMethods()),
     submitting,
     placeOrder: submit,
   }

@@ -38,6 +38,11 @@ export type CheckoutStatus =
   | ({ status: "paid" } & PlacedOrder)
   | { status: "pending"; checkoutUrl: string; total: number }
   | { status: "expired" }
+  /** The buyer cancelled on GCash/Maya, or the payment was declined. Nothing was charged. */
+  | { status: "failed" }
+
+/** `GET /api/shop/payment-methods` — the online payment options, in order (the first is the default). */
+export type PaymentMethodOption = { type: string; label: string }
 
 /** Why placing the order failed. `lineKey` points at the cart line the server rejected (removed
  *  product, changed price…), so the page can say which one to fix. */
@@ -47,13 +52,27 @@ type LoadStatus = "idle" | "loading" | "succeeded" | "failed"
 
 type CheckoutState = {
   shipping: { data: ShippingInfo | null; status: LoadStatus }
+  paymentMethods: { data: PaymentMethodOption[]; status: LoadStatus }
   submitStatus: "idle" | "submitting"
 }
 
 const initialState: CheckoutState = {
   shipping: { data: null, status: "idle" },
+  paymentMethods: { data: [], status: "idle" },
   submitStatus: "idle",
 }
+
+export const fetchPaymentMethods = createAsyncThunk<PaymentMethodOption[], void, { rejectValue: string }>(
+  "checkout/fetchPaymentMethods",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await apiClient.get<PaymentMethodOption[]>("/shop/payment-methods")
+      return data
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error))
+    }
+  }
+)
 
 export const fetchShipping = createAsyncThunk<ShippingInfo, void, { rejectValue: string }>(
   "checkout/fetchShipping",
@@ -69,9 +88,9 @@ export const fetchShipping = createAsyncThunk<ShippingInfo, void, { rejectValue:
 
 export const placeOrder = createAsyncThunk<
   PlaceOrderResult,
-  { form: CheckoutForm; lines: CartLine[]; website: string },
+  { form: CheckoutForm; lines: CartLine[]; website: string; paymentMethod?: string },
   { rejectValue: PlaceOrderError }
->("checkout/placeOrder", async ({ form, lines, website }, { rejectWithValue }) => {
+>("checkout/placeOrder", async ({ form, lines, website, paymentMethod }, { rejectWithValue }) => {
   try {
     const { data } = await apiClient.post<PlaceOrderResult>("/shop/orders", {
       customer: { name: form.name, phone: form.phone },
@@ -89,6 +108,7 @@ export const placeOrder = createAsyncThunk<
         quantity: line.quantity,
         note: line.note,
       })),
+      paymentMethod,
       website,
     })
     return data
@@ -109,6 +129,15 @@ const checkoutSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchPaymentMethods.pending, (state) => {
+        state.paymentMethods.status = "loading"
+      })
+      .addCase(fetchPaymentMethods.fulfilled, (state, action) => {
+        state.paymentMethods = { data: action.payload, status: "succeeded" }
+      })
+      .addCase(fetchPaymentMethods.rejected, (state) => {
+        state.paymentMethods.status = "failed"
+      })
       .addCase(fetchShipping.pending, (state) => {
         state.shipping.status = "loading"
       })

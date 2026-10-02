@@ -1,8 +1,20 @@
 import { useEffect, useRef, useState } from "react"
-import { AlertCircleIcon, ArrowLeftIcon, ChevronDownIcon, InfoIcon, LockIcon, TruckIcon, UserIcon, XIcon } from "lucide-react"
+import {
+  AlertCircleIcon,
+  ArrowLeftIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  InfoIcon,
+  LockIcon,
+  TruckIcon,
+  UserIcon,
+  WalletIcon,
+  XIcon,
+} from "lucide-react"
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 
 import { MobileActionBar } from "@/components/mobile-action-bar"
+import { PaymentIcon, paymentHint } from "@/components/payment-logo"
 import { ProductVisual } from "@/components/product-image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -87,7 +99,18 @@ function Section({ icon: Icon, title, children }: { icon: typeof UserIcon; title
 export function CheckoutPage() {
   const navigate = useNavigate()
   const { lines, lineCount, subtotal, quoteLineCount } = useCart()
-  const { shipping, shippingStatus, retryShipping, submitting, placeOrder } = useCheckout()
+  const {
+    shipping,
+    shippingStatus,
+    retryShipping,
+    paymentMethods,
+    paymentMethodsStatus,
+    retryPaymentMethods,
+    submitting,
+    placeOrder,
+  } = useCheckout()
+  // The buyer's pick; until they pick, the first offered method (GCash) is used.
+  const [pickedMethod, setPickedMethod] = useState("")
   const [form, setForm] = useState<CheckoutForm>(loadSavedCheckoutForm)
   const [touched, setTouched] = useState<Partial<Record<FieldKey, boolean>>>({})
   const [submitError, setSubmitError] = useState<PlaceOrderError | null>(null)
@@ -116,6 +139,7 @@ export function CheckoutPage() {
   const shippingFee = region && shipping ? shipping.rates[region] : null
   const total = subtotal + (shippingFee ?? 0)
   const conflictLine = submitError?.lineKey ? lines.find((line) => line.key === submitError.lineKey) : undefined
+  const paymentMethod = paymentMethods.find((method) => method.type === pickedMethod) ?? paymentMethods[0]
 
   function set(key: FieldKey, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -147,10 +171,11 @@ export function CheckoutPage() {
     setSubmitError(null)
     try {
       const trimmed = Object.fromEntries(FIELDS.map((key) => [key, form[key].trim()])) as CheckoutForm
-      const result = await placeOrder(trimmed, lines, honeypotRef.current?.value ?? "")
+      const result = await placeOrder(trimmed, lines, honeypotRef.current?.value ?? "", paymentMethod?.type)
       saveCheckoutForm(trimmed)
       if (result.kind === "payment") {
-        // The cart stays until the payment is confirmed, so cancelling on PayMongo loses nothing.
+        // Straight to GCash/Maya. The cart stays until the payment is confirmed, so cancelling there
+        // loses nothing.
         setRedirecting(true)
         window.location.assign(result.checkoutUrl)
         return
@@ -164,11 +189,13 @@ export function CheckoutPage() {
 
   // Clickable before everything is filled in, so a tap shows what's missing instead of doing nothing.
   const busy = submitting || redirecting
-  const canSubmit = !!shipping && !busy
+  const canSubmit = !!shipping && !busy && (!needsPayment || !!paymentMethod)
   const submitLabel = needsPayment
     ? busy
-      ? "Redirecting to payment…"
-      : "Continue to payment"
+      ? `Redirecting to ${paymentMethod?.label ?? "payment"}…`
+      : paymentMethod
+        ? `Pay with ${paymentMethod.label}`
+        : "Continue to payment"
     : busy
       ? "Placing order…"
       : "Place order"
@@ -287,6 +314,66 @@ export function CheckoutPage() {
               <Input {...fieldProps("zip")} inputMode="numeric" autoComplete="postal-code" placeholder="e.g. 1100" maxLength={4} />
             </FormField>
           </Section>
+
+          {needsPayment && (
+            <Section icon={WalletIcon} title="Payment method">
+              {/* Radio cards: the whole card is the click target, a native radio (visually hidden) keeps
+                  keyboard/screen-reader behaviour, and the selected card gets the primary border + check. */}
+              <div role="radiogroup" aria-label="Payment method" className="grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2">
+                {paymentMethods.map((method) => {
+                  const checked = method.type === paymentMethod?.type
+                  return (
+                    <label
+                      key={method.type}
+                      className={cn(
+                        "flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border border-input bg-card p-3 transition-colors hover:border-primary/50 has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
+                        checked && "border-primary bg-primary/5 ring-1 ring-primary hover:border-primary"
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value={method.type}
+                        checked={checked}
+                        onChange={() => setPickedMethod(method.type)}
+                        className="sr-only"
+                      />
+                      <PaymentIcon type={method.type} />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="font-medium">{method.label}</span>
+                        <span className="text-xs text-muted-foreground">{paymentHint(method.type)}</span>
+                      </span>
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                          checked ? "border-primary bg-primary text-primary-foreground" : "border-input"
+                        )}
+                      >
+                        {checked && <CheckIcon className="size-3 stroke-3" />}
+                      </span>
+                    </label>
+                  )
+                })}
+                {paymentMethods.length === 0 &&
+                  (paymentMethodsStatus === "failed" ? (
+                    <button
+                      type="button"
+                      onClick={() => retryPaymentMethods()}
+                      className="self-start text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      Couldn't load payment options · Retry
+                    </button>
+                  ) : paymentMethodsStatus === "succeeded" ? (
+                    <p className="text-sm text-muted-foreground">Online payment isn't available right now.</p>
+                  ) : (
+                    <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Spinner /> Loading payment options…
+                    </p>
+                  ))}
+              </div>
+            </Section>
+          )}
 
           {/* Honeypot: hidden from people and screen readers; bots that fill every field give themselves away. */}
           <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">

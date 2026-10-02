@@ -1,0 +1,10 @@
+Payment option icons shown at checkout (trademarks of their owners, used to identify accepted payment methods).
+Both are square crops of the logos below (the GCash symbol; the "m" of the Maya wordmark).
+
+gcash-icon.svg   - from "GCash logo", Wikimedia Commons, public domain (simple geometric shapes/text).
+                   https://commons.wikimedia.org/wiki/File:GCash_logo.svg
+paymaya-icon.svg - from "Maya logo", Wikimedia Commons, licensed CC BY 4.0
+                   (https://creativecommons.org/licenses/by/4.0/); cropped.
+                   https://commons.wikimedia.org/wiki/File:Maya_logo.svg
+
+Replace with the providers' official merchant brand icons when available (same file names).
