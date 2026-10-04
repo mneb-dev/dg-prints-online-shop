@@ -5,9 +5,15 @@ import { ContactDetails, PolicyLayout, PolicySection, TextLink } from "@/compone
 import { Button } from "@/components/ui/button"
 import { BUSINESS, POLICY, businessIdentity, privacyContact } from "@/lib/business-info"
 import { clearSavedCheckoutForm, REGION_LABELS, useCheckout, type ShippingRegion } from "@/lib/checkout"
+import { useShopSettings } from "@/lib/shop-settings"
 import { formatCurrency } from "@/lib/utils"
 
 const REGIONS: ShippingRegion[] = ["luzon", "visayas", "mindanao"]
+
+/** 3 → "3%", 2.5 → "2.5%". */
+function formatPercent(value: number): string {
+  return `${Number(value.toFixed(2))}%`
+}
 
 /** "Contact us at …" — whichever contact routes are filled in, or the Contact page. */
 function ReachUs() {
@@ -178,6 +184,8 @@ export function ReturnsPolicyPage() {
 }
 
 export function TermsPage() {
+  const { convenienceFeePercent } = useShopSettings()
+
   return (
     <PolicyLayout
       title="Terms of sale"
@@ -211,6 +219,13 @@ export function TermsPage() {
       <PolicySection title="Prices">
         <ul>
           <li>Prices are in Philippine pesos (₱). The price shown for each item is what you pay for it.</li>
+          {convenienceFeePercent > 0 && (
+            <li>
+              Online prices include a {formatPercent(convenienceFeePercent)} fee for processing online payments, so
+              they may be slightly higher than prices in our store or on Messenger. There's no separate charge at
+              checkout.
+            </li>
+          )}
           <li>
             Shipping is added at checkout based on your delivery region (see{" "}
             <TextLink to="/shipping">Shipping & delivery</TextLink>). The total shown before you pay is the full amount

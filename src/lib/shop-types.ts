@@ -59,6 +59,8 @@ export type ShopProduct = {
 export type ShopSettings = {
   /** "" when DG Prints hasn't configured one. */
   messengerUrl: string
+  /** Processing fee baked into shop prices; 0 = off. Missing from servers older than this field. */
+  convenienceFeePercent?: number
 }
 
 export type Paginated<T> = {

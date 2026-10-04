@@ -16,6 +16,8 @@ export function useShopSettings() {
 
   return {
     messengerUrl: data?.messengerUrl ?? "",
+    /** 0 until loaded or when off — the Terms page only mentions the fee when it's above 0. */
+    convenienceFeePercent: Math.max(0, Number(data?.convenienceFeePercent) || 0),
     isLoading: status === "idle" || status === "loading",
   }
 }
