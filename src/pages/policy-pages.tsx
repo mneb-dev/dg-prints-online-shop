@@ -218,7 +218,11 @@ export function TermsPage() {
 
       <PolicySection title="Prices">
         <ul>
-          <li>Prices are in Philippine pesos (₱). The price shown for each item is what you pay for it.</li>
+          <li>
+            Prices are in Philippine pesos (₱)
+            {POLICY.pricesIncludeVat ? " and include 12% VAT" : ""}. The price shown for each item is what you pay for
+            it.
+          </li>
           {convenienceFeePercent > 0 && (
             <li>
               Online prices include a {formatPercent(convenienceFeePercent)} fee for processing online payments, so

@@ -37,6 +37,8 @@ export const POLICY = {
   productionTime: "2–3 working days",
   /** Delivery time after shipping, per region. Empty hides that row. */
   deliveryTime: { luzon: "2–3 days", visayas: "5–14 days", mindanao: "5–14 days" },
+  /** VAT-registered seller: shop prices already include 12% VAT (stated on the Terms page). */
+  pricesIncludeVat: false,
   /** Courier(s) used, e.g. "SPX Express". Empty hides the line. */
   couriers: "SPX Express (recommended) and J&T Express",
 }
