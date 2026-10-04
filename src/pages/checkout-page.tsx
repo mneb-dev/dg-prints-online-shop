@@ -23,7 +23,9 @@ import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import { lineTotal, useCart } from "@/lib/cart"
 import {
+  EMPTY_CHECKOUT_FORM,
   REGION_LABELS,
+  clearSavedCheckoutForm,
   loadSavedCheckoutForm,
   saveCheckoutForm,
   useCheckout,
@@ -112,6 +114,8 @@ export function CheckoutPage() {
   // The buyer's pick; until they pick, the first offered method (GCash) is used.
   const [pickedMethod, setPickedMethod] = useState("")
   const [form, setForm] = useState<CheckoutForm>(loadSavedCheckoutForm)
+  // Prefilled from this device's last order — offer to forget it (shared phones/computers).
+  const [hasSavedDetails, setHasSavedDetails] = useState(() => Object.values(form).some(Boolean))
   const [touched, setTouched] = useState<Partial<Record<FieldKey, boolean>>>({})
   const [submitError, setSubmitError] = useState<PlaceOrderError | null>(null)
   const honeypotRef = useRef<HTMLInputElement>(null)
@@ -260,6 +264,23 @@ export function CheckoutPage() {
             <FormField id="checkout-phone" label="Mobile number" error={visibleError("phone")} className="sm:col-span-2">
               <Input {...fieldProps("phone")} type="tel" inputMode="tel" autoComplete="tel" placeholder="0917 123 4567" maxLength={16} />
             </FormField>
+            <p className="text-xs text-muted-foreground sm:col-span-2">
+              {hasSavedDetails ? "Filled in from your last order on this device. " : "Saved on this device for your next order. "}
+              {hasSavedDetails && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearSavedCheckoutForm()
+                    setForm(EMPTY_CHECKOUT_FORM)
+                    setTouched({})
+                    setHasSavedDetails(false)
+                  }}
+                  className="font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  Forget my details
+                </button>
+              )}
+            </p>
           </Section>
 
           <Section icon={TruckIcon} title="Shipping address">
@@ -446,6 +467,21 @@ export function CheckoutPage() {
             {needsPayment
               ? "You'll pay securely online through PayMongo."
               : "No payment now: we'll message or call you to confirm your order and payment."}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            By placing your order, you agree to our{" "}
+            <Link to="/terms" className="font-medium text-foreground underline-offset-4 hover:underline">
+              Terms of sale
+            </Link>{" "}
+            and{" "}
+            <Link to="/returns" className="font-medium text-foreground underline-offset-4 hover:underline">
+              Returns policy
+            </Link>
+            . We use your details only for this order, as described in our{" "}
+            <Link to="/privacy" className="font-medium text-foreground underline-offset-4 hover:underline">
+              Privacy policy
+            </Link>
+            .
           </p>
           <Button type="submit" variant="gradient" size="lg" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}

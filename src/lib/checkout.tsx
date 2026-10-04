@@ -72,6 +72,15 @@ export function saveCheckoutForm(form: CheckoutForm) {
   }
 }
 
+/** "Forget my details": removes the saved contact + address from this device (shared phones). */
+export function clearSavedCheckoutForm() {
+  try {
+    localStorage.removeItem(FORM_STORAGE_KEY)
+  } catch {
+    // Storage blocked — nothing was saved to begin with.
+  }
+}
+
 /** Facade over the checkout slice: shipping fees/provinces (fetched once) and placing the order. */
 export function useCheckout() {
   const dispatch = useAppDispatch()

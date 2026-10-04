@@ -5,6 +5,7 @@ import { Link, NavLink, Outlet } from "react-router-dom"
 import { Logo } from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { BUSINESS, businessIdentity, POLICY_LINKS } from "@/lib/business-info"
 import { useCart } from "@/lib/cart"
 import { CART_ADDED_EVENT } from "@/lib/fly-to-cart"
 import { cn } from "@/lib/utils"
@@ -80,9 +81,32 @@ export function ShopLayout() {
         </main>
 
         <footer className="border-t border-border bg-card/50">
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:px-6">
-            <Logo className="h-7 w-auto opacity-80" />
-            <p>© {new Date().getFullYear()} DG Prints. Custom printing, made simple.</p>
+          <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 text-sm text-muted-foreground sm:px-6">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+              <Logo className="h-7 w-auto opacity-80" />
+              <nav aria-label="Shop information">
+                <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+                  {POLICY_LINKS.map((link) => (
+                    <li key={link.to}>
+                      <Link
+                        to={link.to}
+                        className="rounded-sm outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+            {/* Seller identity, as Philippine e-commerce rules expect — only the details that are filled in. */}
+            <div className="flex flex-col items-center gap-1 text-center text-xs sm:items-start sm:text-left">
+              <p>{businessIdentity()}</p>
+              {(BUSINESS.address || BUSINESS.phone || BUSINESS.email) && (
+                <p>{[BUSINESS.address, BUSINESS.phone, BUSINESS.email].filter(Boolean).join(" · ")}</p>
+              )}
+              <p>© {new Date().getFullYear()} {BUSINESS.tradeName}. Custom printing, made simple.</p>
+            </div>
           </div>
         </footer>
       </div>

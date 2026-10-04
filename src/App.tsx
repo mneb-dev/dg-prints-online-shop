@@ -7,6 +7,13 @@ import { CheckoutPage } from "@/pages/checkout-page"
 import { CheckoutReturnPage } from "@/pages/checkout-return-page"
 import { OrderPlacedPage } from "@/pages/order-placed-page"
 import { LandingPage } from "@/pages/landing-page"
+import {
+  ContactPage,
+  PrivacyPage,
+  ReturnsPolicyPage,
+  ShippingPolicyPage,
+  TermsPage,
+} from "@/pages/policy-pages"
 import { ProductPage } from "@/pages/product-page"
 import { ShopPage } from "@/pages/shop-page"
 
@@ -23,6 +30,11 @@ export default function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="checkout/success" element={<OrderPlacedPage />} />
           <Route path="checkout/return" element={<CheckoutReturnPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="shipping" element={<ShippingPolicyPage />} />
+          <Route path="returns" element={<ReturnsPolicyPage />} />
+          <Route path="terms" element={<TermsPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
