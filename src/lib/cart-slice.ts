@@ -5,7 +5,7 @@ import type { LinePricing } from "@/lib/pricing-resolver"
 const CART_STORAGE_KEY = "dgprints_shop_cart"
 export const MAX_LINE_QUANTITY = 9999
 /** Same limit the portal enforces on order item notes. */
-export const MAX_NOTE_LENGTH = 60
+export const MAX_NOTE_LENGTH = 250
 
 export type SelectedOption = { name: string; value: string }
 

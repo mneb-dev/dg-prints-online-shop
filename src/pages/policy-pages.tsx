@@ -216,6 +216,20 @@ export function TermsPage() {
         </ul>
       </PolicySection>
 
+      <PolicySection title="3D printed items">
+        <p>
+          A 3D design file (like STL or 3MF) looks perfectly smooth on screen. A 3D printer builds the real item one thin
+          layer at a time, so it will be very close to the design, but not exactly the same. This is normal, not a
+          defect:
+        </p>
+        <ul>
+          <li>You can see and feel thin lines on the surface.</li>
+          <li>There may be small marks where support pieces were removed.</li>
+          <li>The size may be off by about half a millimeter, and very tiny details may not show.</li>
+          <li>Colors may look slightly different from photos.</li>
+        </ul>
+      </PolicySection>
+
       <PolicySection title="Prices">
         <ul>
           <li>
