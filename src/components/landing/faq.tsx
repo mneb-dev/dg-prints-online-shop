@@ -4,6 +4,19 @@ import { Link } from "react-router-dom"
 import { SectionHeading } from "@/components/landing/section-heading"
 import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from "@/components/ui/accordion"
 import { BUSINESS, POLICY } from "@/lib/business-info"
+import { useShopSettings } from "@/lib/shop-settings"
+
+/** "Message us on Facebook", linked to the shop's Messenger page when one is set (portal Settings). */
+function MessengerLink() {
+  const { messengerUrl } = useShopSettings()
+  if (!messengerUrl) return <>message us on Facebook</>
+  return (
+    <a href={messengerUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">
+      message us on Facebook
+      <span className="sr-only"> (opens in new tab)</span>
+    </a>
+  )
+}
 
 function MoreLink({ to, children }: { to: string; children: ReactNode }) {
   return (
@@ -30,6 +43,9 @@ const FAQS: Array<{ question: string; answer: ReactNode }> = [
         <p>
           Every product shows its price. Pick your options and you'll see the total right away, and checkout shows the
           final amount, shipping included, before you pay.
+        </p>
+        <p className="mt-3">
+          For made-to-order products, <MessengerLink /> and we'll give you a price.
         </p>
         <MoreLink to="/terms">Read our terms of sale</MoreLink>
       </>
