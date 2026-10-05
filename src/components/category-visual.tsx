@@ -14,17 +14,29 @@ import {
 import { cn } from "@/lib/utils"
 
 // Categories are admin-managed free text (and get renamed), so match on keywords, not exact names.
-const CATEGORY_ICON_RULES: Array<{ pattern: RegExp; icon: LucideIcon }> = [
-  { pattern: /sticker|label|decal/i, icon: StickerIcon },
-  { pattern: /tarp|banner|streamer/i, icon: FlagIcon },
-  { pattern: /sintra|board|signage|acrylic/i, icon: LayersIcon },
-  { pattern: /3d/i, icon: BoxIcon },
-  { pattern: /shirt|dtf|apparel|merch|tote/i, icon: ShirtIcon },
-  { pattern: /card|id|invitation/i, icon: IdCardIcon },
+// Each rule also carries a one-line blurb for the landing page's category cards.
+const CATEGORY_ICON_RULES: Array<{ pattern: RegExp; icon: LucideIcon; blurb: string }> = [
+  { pattern: /sticker|label|decal/i, icon: StickerIcon, blurb: "Labels, decals and die-cut stickers" },
+  { pattern: /tarp|banner|streamer/i, icon: FlagIcon, blurb: "Tarpaulins, banners and streamers" },
+  { pattern: /sintra|board|signage|acrylic/i, icon: LayersIcon, blurb: "Signage, boards and acrylic" },
+  { pattern: /3d/i, icon: BoxIcon, blurb: "Custom 3D-printed pieces" },
+  { pattern: /shirt|dtf|apparel|merch|tote/i, icon: ShirtIcon, blurb: "Shirts, totes and merch" },
+  { pattern: /card|id|invitation/i, icon: IdCardIcon, blurb: "Cards, IDs and invitations" },
 ]
 
+const DEFAULT_BLURB = "Made to order, priced upfront"
+
+function categoryRule(category: string) {
+  return CATEGORY_ICON_RULES.find((rule) => rule.pattern.test(category))
+}
+
 function categoryIcon(category: string): LucideIcon {
-  return CATEGORY_ICON_RULES.find((rule) => rule.pattern.test(category))?.icon ?? PrinterIcon
+  return categoryRule(category)?.icon ?? PrinterIcon
+}
+
+/** A short line describing what a category covers, e.g. "Labels, decals and die-cut stickers". */
+export function categoryBlurb(category: string): string {
+  return categoryRule(category)?.blurb ?? DEFAULT_BLURB
 }
 
 export function CategoryIcon({ category, ...props }: { category: string } & LucideProps) {
