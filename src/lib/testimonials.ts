@@ -37,21 +37,23 @@ export const TESTIMONIALS_SECTION = {
   /** Optional line under the title. Ignored when the rating summary is shown. */
   lead: "",
   /** Optional link to all reviews on the Facebook page, shown as a button under the cards. */
-  moreUrl: "",
+  moreUrl: "https://www.facebook.com/share/p/1FdJYgcXEP/",
   /** Average of the ratings listed here, e.g. "★ 4.9 · from 6 customer reviews" (needs 2+ entries). */
   showAverage: true,
 }
 
 export const TESTIMONIALS: Testimonial[] = [
-  // {
-  //   name: "Ana R.",
-  //   quote: "Paste the customer's words here, exactly as written.",
-  //   rating: 5,
-  //   product: "Name Clicker",
-  //   location: "Balanga, Bataan",
-  //   postUrl: "https://www.facebook.com/…",
-  //   photoUrl: "https://scontent….fbcdn.net/…",
-  // },
+  {
+    name: "Julito Yosoya Jr.",
+    quote: "Nag try nga po ako sa ibang pagawa ng sticker kaso puro anlalabo, sainyo lang ung nakita namin quality talaga mas makulay at mas malinaw pag kaka print ninyo <3",
+    rating: 5,
+    product: "Sticker Label",
+    location: "Caloocan City",
+    postUrl: "https://www.facebook.com/photo.php?fbid=122181655034792327&set=pb.61573769812248.-2207520000&type=3",
+    photoUrl: "https://scontent.fcrk1-4.fna.fbcdn.net/v/t39.30808-6/763847758_4356956277948189_4505353451824505079_n.jpg?stp=dst-jpg_tt6&cstp=mx1344x1344&ctp=s1344x1344&_nc_cat=103&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFJQdwbsNedB4u79ZAswFPoehMFHFNjHVZ6EwUcU2MdVuoRnZc_VbXwjR9BAKXFwlXpHUaRlKZN0AQIsAXFrz5q&_nc_ohc=e1EdhF2WWAsQ7kNvwHwPOpe&_nc_oc=AdrCULrkM81_rMdLFGDptq-DdoaigoXUoiVV5SJzHRITrzE-LSfOHqygsLAVyoXfhAg&_nc_zt=23&_nc_ht=scontent.fcrk1-4.fna&_nc_gid=x_-2ryE4cZlZOreDDm3i5g&_nc_ss=7b2a8&oh=00_AQMEIX0Unf22VCUCEZmv3nn89abzUp0u_wDKvJL4DSM0og&oe=6AC9C5BF",
+  },
+
+  
 ]
 
 const FACEBOOK_HOSTS = ["facebook.com", "www.facebook.com", "m.facebook.com", "web.facebook.com", "fb.com", "www.fb.com", "fb.watch"]
