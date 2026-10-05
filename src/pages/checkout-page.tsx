@@ -13,7 +13,8 @@ import {
 } from "lucide-react"
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 
-import { ClayOrb } from "@/components/clay-orb"
+import { IconBadge } from "@/components/icon-badge"
+import { optionCardClassName } from "@/components/ui/choice"
 import { MobileActionBar } from "@/components/mobile-action-bar"
 import { PaymentIcon, paymentHint } from "@/components/payment-logo"
 import { ProductVisual } from "@/components/product-image"
@@ -96,9 +97,9 @@ function FormField({
 
 function Section({ icon: Icon, title, children }: { icon: typeof UserIcon; title: string; children: React.ReactNode }) {
   return (
-    <section className="clay-panel p-5 sm:p-8">
-      <h2 className="mb-5 flex items-center gap-3 text-xl font-extrabold">
-        <ClayOrb icon={Icon} round className="size-10" iconClassName="size-5" />
+    <section className="surface p-5 sm:p-8">
+      <h2 className="mb-6 flex items-center gap-3 text-lg font-semibold sm:text-xl">
+        <IconBadge icon={Icon} size="sm" />
         {title}
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
@@ -215,15 +216,15 @@ export function CheckoutPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <Link
         to="/cart"
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-full font-heading text-sm font-extrabold text-muted-foreground outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
       >
         <ArrowLeftIcon className="size-4" />
         Back to cart
       </Link>
-      <h1 className="mb-8 text-4xl leading-[1.1] font-black tracking-tight sm:text-5xl">Checkout</h1>
+      <h1 className="mb-8 text-3xl sm:text-4xl">Checkout</h1>
 
       {paymentCancelled && !submitError && (
-        <div role="status" className="clay-well mb-6 flex items-start gap-3 p-4 text-sm">
+        <div role="status" className="surface-muted mb-6 flex items-start gap-3 p-4 text-sm">
           <InfoIcon className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="flex-1">
             <span className="font-medium">Payment cancelled.</span>{" "}
@@ -233,7 +234,7 @@ export function CheckoutPage() {
             type="button"
             aria-label="Dismiss"
             onClick={() => setSearchParams({}, { replace: true })}
-            className="-m-1 rounded-full p-1.5 text-muted-foreground outline-none hover:bg-card hover:text-foreground focus-visible:ring-4 focus-visible:ring-primary/30"
+            className="-m-1 rounded-full p-1.5 text-muted-foreground outline-none hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
             <XIcon className="size-4" />
           </button>
@@ -241,7 +242,7 @@ export function CheckoutPage() {
       )}
 
       {submitError && (
-        <div role="alert" className="mb-6 flex items-start gap-3 rounded-[20px] bg-destructive/10 p-4 text-sm">
+        <div role="alert" className="mb-6 flex items-start gap-3 rounded-lg bg-destructive/10 p-4 text-sm">
           <AlertCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
           <div className="flex flex-col gap-1">
             <p className="font-medium">{submitError.message}</p>
@@ -362,16 +363,16 @@ export function CheckoutPage() {
           {needsPayment && (
             <Section icon={WalletIcon} title="Payment method">
               {/* Radio cards: the whole card is the click target, a native radio (visually hidden) keeps
-                  keyboard/screen-reader behaviour, and the selected card presses in with a violet ring + check. */}
+                  keyboard/screen-reader behaviour, and the selected card gets an indigo outline + check. */}
               <div role="radiogroup" aria-label="Payment method" className="grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2">
                 {paymentMethods.map((method) => {
                   const checked = method.type === paymentMethod?.type
                   return (
                     <label
                       key={method.type}
-                      className={cn(
-                        "flex min-h-16 cursor-pointer items-center gap-3 rounded-[20px] bg-card p-4 shadow-clay-card transition-[translate,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-clay-card-hover has-focus-visible:ring-4 has-focus-visible:ring-primary/30 motion-reduce:hover:translate-y-0",
-                        checked && "bg-accent shadow-clay-pressed ring-2 ring-primary hover:translate-y-0 hover:shadow-clay-pressed"
+                      className={optionCardClassName(
+                        checked,
+                        "flex min-h-16 items-center gap-3 has-focus-visible:ring-2 has-focus-visible:ring-indigo-500 has-focus-visible:ring-offset-2"
                       )}
                     >
                       <input
@@ -384,7 +385,7 @@ export function CheckoutPage() {
                       />
                       <PaymentIcon type={method.type} />
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="font-heading font-extrabold">{method.label}</span>
+                        <span className="font-semibold">{method.label}</span>
                         <span className="text-xs text-muted-foreground">{paymentHint(method.type)}</span>
                       </span>
                       <span
@@ -426,8 +427,8 @@ export function CheckoutPage() {
           </div>
         </div>
 
-        <aside className="clay-panel flex flex-col gap-4 p-6 lg:sticky lg:top-28">
-          <h2 className="text-xl font-extrabold">Order summary</h2>
+        <aside className="surface flex flex-col gap-4 p-6 lg:sticky lg:top-24">
+          <h2 className="text-xl font-semibold">Order summary</h2>
           <ul className="flex flex-col gap-3">
             {lines.map((line) => {
               const lineAmount = lineTotal(line)
@@ -443,14 +444,14 @@ export function CheckoutPage() {
                     url={line.imageUrl}
                     alt={line.productName}
                     category={line.category}
-                    className="size-12 shrink-0 rounded-2xl shadow-clay-card"
+                    className="size-12 shrink-0 rounded-lg border border-slate-100"
                     iconClassName="size-5"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-heading text-sm font-extrabold">{line.productName}</p>
+                    <p className="truncate text-sm font-semibold">{line.productName}</p>
                     <p className="text-xs text-muted-foreground">Qty {line.quantity}</p>
                   </div>
-                  <p className="font-heading text-sm font-black tabular-nums">
+                  <p className="text-sm font-bold tabular-nums">
                     {lineAmount === null ? <span className="text-xs text-muted-foreground">Quote</span> : formatCurrency(lineAmount)}
                   </p>
                 </li>
@@ -480,8 +481,8 @@ export function CheckoutPage() {
           </dl>
           <Separator />
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-extrabold">Total</span>
-            <span className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(total)}</span>
+            <span className="font-semibold">Total</span>
+            <span className="text-3xl font-bold tracking-tight tabular-nums">{formatCurrency(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">
             {quoteLineCount > 0
@@ -515,7 +516,7 @@ export function CheckoutPage() {
         <MobileActionBar>
           <div className="min-w-0 flex-1">
             <p className="text-xs text-muted-foreground">{shippingFee === null ? "Total before shipping" : "Total"}</p>
-            <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
+            <p className="text-xl leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
           </div>
           <Button type="submit" size="sm" className="h-12" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}

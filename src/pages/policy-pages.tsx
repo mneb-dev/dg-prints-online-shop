@@ -61,9 +61,9 @@ export function ShippingPolicyPage() {
         {shipping && (
           <dl className="grid max-w-sm grid-cols-1 gap-2">
             {REGIONS.map((region) => (
-              <div key={region} className="clay-well flex items-center justify-between gap-4 px-4 py-3">
+              <div key={region} className="surface-muted flex items-center justify-between gap-4 px-4 py-3">
                 <dt>{REGION_LABELS[region]}</dt>
-                <dd className="font-heading font-black tabular-nums">{formatCurrency(shipping.rates[region])}</dd>
+                <dd className="font-bold tabular-nums">{formatCurrency(shipping.rates[region])}</dd>
               </div>
             ))}
           </dl>

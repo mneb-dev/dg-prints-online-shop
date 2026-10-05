@@ -63,19 +63,19 @@ export function CheckoutReturnPage() {
   const stillChecking = view.kind === "checking" || (view.kind === "status" && view.status === "pending" && polling)
 
   return (
-    <div className="clay-panel mx-4 my-10 flex max-w-xl flex-col items-center px-6 py-12 text-center sm:mx-auto sm:my-16 sm:px-10">
+    <div className="surface mx-4 my-10 flex max-w-xl flex-col items-center px-6 py-12 text-center sm:mx-auto sm:my-16 sm:px-10">
       {stillChecking ? (
         <>
           <Spinner className="mb-6 size-10 text-primary" />
-          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">Confirming your payment…</h1>
+          <h1 className="text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl">Confirming your payment…</h1>
           <p className="mt-3 font-medium text-muted-foreground">This only takes a few seconds. Please don't close this page.</p>
         </>
       ) : view.kind === "status" && view.status === "pending" ? (
         <>
-          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-600 text-white shadow-clay-button">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 ring-8 ring-indigo-50/60">
             <ClockIcon className="size-9" />
           </span>
-          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">We haven't received your payment yet</h1>
+          <h1 className="text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl">We haven't received your payment yet</h1>
           <p className="mt-3 font-medium text-muted-foreground">
             If you already paid, it can take a moment to come through — check again shortly. Otherwise you can go
             back and finish paying.
@@ -91,10 +91,10 @@ export function CheckoutReturnPage() {
         </>
       ) : view.kind === "status" && view.status === "failed" ? (
         <>
-          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white shadow-clay-button">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-8 ring-rose-50/60">
             <XCircleIcon className="size-9" />
           </span>
-          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">Payment wasn't completed</h1>
+          <h1 className="text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl">Payment wasn't completed</h1>
           <p className="mt-3 font-medium text-muted-foreground">
             The payment was cancelled or didn't go through, so you weren't charged and no order was placed. Your cart
             is still here — you can try again.
@@ -107,10 +107,10 @@ export function CheckoutReturnPage() {
         </>
       ) : (
         <>
-          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white shadow-clay-button">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-8 ring-rose-50/60">
             <XCircleIcon className="size-9" />
           </span>
-          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">
+          <h1 className="text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl">
             {view.kind === "error" ? "Couldn't check your payment" : "This payment link has expired"}
           </h1>
           <p className="mt-3 font-medium text-muted-foreground">

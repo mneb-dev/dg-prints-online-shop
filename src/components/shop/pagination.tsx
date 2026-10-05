@@ -18,7 +18,7 @@ function pageItems(page: number, pageCount: number): Array<number | "gap"> {
 }
 
 const stepButton =
-  "flex size-11 cursor-pointer items-center justify-center rounded-full bg-card text-foreground shadow-clay-card transition-[translate,box-shadow,scale] duration-200 outline-none hover:-translate-y-0.5 hover:text-primary hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 active:scale-[0.92] active:shadow-clay-pressed disabled:pointer-events-none disabled:opacity-40 motion-reduce:hover:translate-y-0"
+  "flex size-11 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-xs transition-all duration-200 outline-none hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40"
 
 export function Pagination({
   page,
@@ -56,10 +56,10 @@ export function Pagination({
                   aria-label={`Page ${item}`}
                   aria-current={item === page ? "page" : undefined}
                   className={cn(
-                    "flex size-11 cursor-pointer items-center justify-center rounded-full font-heading font-black tabular-nums transition-[translate,box-shadow,color] duration-200 outline-none focus-visible:ring-4 focus-visible:ring-primary/30",
+                    "flex size-11 cursor-pointer items-center justify-center rounded-lg font-semibold tabular-nums transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2",
                     item === page
-                      ? "bg-brand-gradient text-primary-foreground shadow-clay-button"
-                      : "text-muted-foreground hover:-translate-y-0.5 hover:bg-card hover:text-primary hover:shadow-clay-card motion-reduce:hover:translate-y-0"
+                      ? "bg-brand-gradient text-primary-foreground shadow-cta"
+                      : "text-slate-600 hover:bg-indigo-50 hover:text-primary"
                   )}
                 >
                   {item}
@@ -72,7 +72,7 @@ export function Pagination({
           <ChevronRightIcon className="size-5" />
         </button>
       </div>
-      <p className="text-sm font-semibold text-muted-foreground tabular-nums">
+      <p className="text-sm text-muted-foreground tabular-nums">
         Showing {first}–{last} of {total}
       </p>
     </nav>

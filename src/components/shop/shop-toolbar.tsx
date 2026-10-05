@@ -1,13 +1,15 @@
 import { SearchIcon, XIcon } from "lucide-react"
 
 import { CategoryIcon } from "@/components/category-visual"
+import { chipClassName } from "@/components/ui/choice"
+import { fieldClassName } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SHOP_SORTS, isShopSort, type ShopSort } from "@/lib/catalog"
 import { cn } from "@/lib/utils"
 
-const focusRing = "outline-none focus-visible:ring-4 focus-visible:ring-primary/30"
+const focusRing = "outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
 
-/** The shop's controls: clay category pills (as on the landing page), with search and sort beside them. */
+/** The shop's controls in one white toolbar card: category chips, with search and sort beside them. */
 export function ShopToolbar({
   searchDraft,
   onSearchChange,
@@ -26,10 +28,10 @@ export function ShopToolbar({
   onCategoryChange: (category: string) => void
 }) {
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="surface flex flex-col gap-3 p-3 sm:p-4 lg:flex-row lg:items-center lg:justify-between">
       {categories.length > 0 && (
         // Scrolls sideways on phones instead of wrapping into a tall block.
-        <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pt-1 pb-3 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-1">
+        <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
           <CategoryChip active={category === ""} onClick={() => onCategoryChange("")}>
             All
           </CategoryChip>
@@ -50,7 +52,7 @@ export function ShopToolbar({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search"
             aria-label="Search products"
-            className="h-11 w-full rounded-full border-0 bg-clay-well pr-10 pl-10 text-sm font-medium text-foreground shadow-clay-pressed transition-[background-color,box-shadow] duration-200 outline-none placeholder:text-muted-foreground focus:bg-card focus:ring-4 focus:ring-primary/20 [&::-webkit-search-cancel-button]:hidden"
+            className={cn(fieldClassName, "h-11 pr-10 pl-10 text-sm [&::-webkit-search-cancel-button]:hidden")}
           />
           {searchDraft && (
             <button
@@ -76,8 +78,7 @@ export function ShopToolbar({
         >
           <SelectTrigger
             aria-label="Sort products"
-            // A raised pill rather than the default recessed field: it sits in the toolbar, not a form.
-            className="h-11 w-auto shrink-0 gap-1.5 rounded-full bg-card px-4 font-heading text-sm font-extrabold shadow-clay-card hover:shadow-clay-card-hover"
+            className="h-11 w-auto shrink-0 gap-1.5 px-3.5 text-sm font-medium"
           >
             <SelectValue />
           </SelectTrigger>
@@ -111,16 +112,10 @@ function CategoryChip({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={cn(
-        "inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-full px-5 font-heading text-sm font-extrabold whitespace-nowrap transition-[translate,box-shadow,color] duration-300 active:scale-[0.96] motion-reduce:transition-none",
-        focusRing,
-        active
-          ? "bg-brand-gradient text-primary-foreground shadow-clay-button"
-          : "bg-card/80 text-foreground shadow-clay-card backdrop-blur-xl hover:-translate-y-1 hover:text-primary hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0"
-      )}
+      className={chipClassName(active, "gap-2")}
     >
       {icon && (
-        <CategoryIcon category={icon} className={cn("size-4", !active && "text-primary")} strokeWidth={2.25} aria-hidden />
+        <CategoryIcon category={icon} className={cn("size-4", !active && "text-indigo-500")} strokeWidth={2} aria-hidden />
       )}
       {children}
     </button>
@@ -162,7 +157,7 @@ export function ActiveFilters({
           onClick={chip.onClear}
           aria-label={`Remove ${chip.name}`}
           className={cn(
-            "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full bg-primary/10 pr-2 pl-3 text-sm font-bold text-primary transition-colors hover:bg-primary/15",
+            "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full bg-indigo-50 pr-2 pl-3 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-100 transition-colors ring-inset hover:bg-indigo-100",
             focusRing
           )}
         >
@@ -174,7 +169,7 @@ export function ActiveFilters({
         <button
           type="button"
           onClick={onClearAll}
-          className={cn("h-8 cursor-pointer rounded-full px-2 text-sm font-bold text-muted-foreground underline-offset-4 hover:text-primary hover:underline", focusRing)}
+          className={cn("h-8 cursor-pointer rounded-full px-2 text-sm font-semibold text-muted-foreground underline-offset-4 hover:text-primary hover:underline", focusRing)}
         >
           Clear all
         </button>

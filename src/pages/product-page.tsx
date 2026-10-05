@@ -10,6 +10,7 @@ import { ProductVisual } from "@/components/product-image"
 import { StartingPrice } from "@/components/price-tag"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { chipClassName, optionCardClassName } from "@/components/ui/choice"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -47,12 +48,7 @@ function ChoiceChip({
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={cn(
-        "inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 font-heading text-sm font-extrabold transition-[translate,box-shadow,color] duration-200 outline-none focus-visible:ring-4 focus-visible:ring-primary/30 active:scale-[0.96] motion-reduce:transition-none",
-        selected
-          ? "bg-brand-gradient text-primary-foreground shadow-clay-button"
-          : "bg-card text-foreground shadow-clay-card hover:-translate-y-0.5 hover:text-primary hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0"
-      )}
+      className={chipClassName(selected)}
     >
       {selected && <CheckIcon className="size-3.5" />}
       {children}
@@ -74,17 +70,12 @@ function PackageTierCard({
       type="button"
       aria-pressed={selected}
       onClick={onSelect}
-      className={cn(
-        "flex cursor-pointer flex-col items-start gap-1 rounded-[20px] p-4 text-left transition-[translate,box-shadow,background-color] duration-200 outline-none focus-visible:ring-4 focus-visible:ring-primary/30",
-        selected
-          ? "bg-accent shadow-clay-pressed ring-2 ring-primary"
-          : "bg-card shadow-clay-card hover:-translate-y-0.5 hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0"
-      )}
+      className={optionCardClassName(selected, "flex flex-col items-start gap-1")}
     >
       <span className={cn("text-sm font-medium", selected && "text-accent-foreground")}>
         {entry.packageName || describeAppliesTo(entry.appliesTo)}
       </span>
-      <span className="font-heading text-lg font-black tabular-nums">{formatCurrency(entry.price)}</span>
+      <span className="text-lg font-bold tabular-nums">{formatCurrency(entry.price)}</span>
     </button>
   )
 }
@@ -216,7 +207,7 @@ function ConfigFields({
       )}
 
       {unavailable && (
-        <p className="clay-well flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
+        <p className="surface-muted flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
           <InfoIcon className="mt-0.5 size-4 shrink-0" />
           This combination isn't available. Try a different option.
         </p>
@@ -366,13 +357,13 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
       <NoteField value={note} onChange={setNote} />
 
       {/* Desktop keeps the button inline; below lg it lives in the MobileActionBar. */}
-      <div className="clay-panel hidden gap-4 p-6 lg:flex lg:items-center lg:justify-between">
+      <div className="surface hidden gap-4 p-6 lg:flex lg:items-center lg:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{manual ? "Price" : "Total"}</p>
           {manual ? (
             <p className="text-lg font-semibold">Price on request</p>
           ) : total !== null ? (
-            <p className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
+            <p className="text-3xl font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
           ) : (
             <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
           )}
@@ -396,7 +387,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
           ) : total !== null ? (
             <>
               <p className="text-xs text-muted-foreground">Total</p>
-              <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
+              <p className="text-xl leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
             </>
           ) : (
             <StartingPrice product={product} />
@@ -424,7 +415,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
               iconClassName="size-6"
             />
             <div className="min-w-0 flex-1">
-              <SheetTitle className="truncate text-lg font-extrabold">{product.name}</SheetTitle>
+              <SheetTitle className="truncate text-lg font-semibold">{product.name}</SheetTitle>
               <SheetDescription>Choose your options</SheetDescription>
             </div>
             <SheetClose render={<Button variant="secondary" size="icon" className="self-start" />}>
@@ -444,7 +435,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
                 <p className="font-semibold">Price on request</p>
               ) : total !== null ? (
                 <>
-                  <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
+                  <p className="text-xl leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
                   {priceBreakdown}
                 </>
               ) : (
@@ -496,9 +487,9 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
 
   return (
     <>
-      <div className="clay-panel flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="surface flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-heading text-lg font-extrabold">Made to order</p>
+          <p className="text-lg font-semibold">Made to order</p>
           <p className="text-sm text-muted-foreground">
             {messengerUrl || isLoading
               ? "Message us to confirm the details and price."
@@ -557,7 +548,7 @@ export function ProductPage() {
     }
     return (
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:py-12">
-        <div className="aspect-square w-full animate-pulse rounded-[32px] bg-card/60 shadow-clay-card" />
+        <div className="aspect-square w-full animate-pulse rounded-xl bg-slate-200/70" />
         <div className="flex flex-col gap-4">
           <div className="h-6 w-24 animate-pulse rounded-full bg-muted" />
           <div className="h-9 w-2/3 animate-pulse rounded-full bg-muted" />
@@ -571,7 +562,7 @@ export function ProductPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-10">
       <Link
         to="/shop"
-        className="mb-6 inline-flex min-h-11 items-center gap-1.5 rounded-full font-heading text-sm font-extrabold text-muted-foreground outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
+        className="mb-6 inline-flex min-h-11 items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
       >
         <ArrowLeftIcon className="size-4" />
         Back to shop
@@ -587,13 +578,13 @@ export function ProductPage() {
               </Badge>
               {!product.inStock && <OutOfStockBadge />}
             </div>
-            <h1 className="text-4xl leading-[1.1] font-black tracking-tight text-balance sm:text-5xl">{product.name}</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl">{product.name}</h1>
             {product.description && <p className="text-lg leading-relaxed font-medium text-muted-foreground">{product.description}</p>}
-            <StartingPrice product={product} className="font-heading text-2xl [&>span:last-child]:font-black" />
+            <StartingPrice product={product} className="text-2xl [&>span:last-child]:font-bold" />
           </div>
           {/* Keyed so switching products resets every choice. */}
           {!product.inStock ? (
-            <p className="clay-well flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
+            <p className="surface-muted flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
               <InfoIcon className="mt-0.5 size-4 shrink-0" />
               This item is out of stock right now. Please check back later.
             </p>

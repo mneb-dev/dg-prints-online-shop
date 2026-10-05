@@ -60,7 +60,7 @@ function LineNote({ line }: { line: CartLine }) {
 
   if (line.note) {
     return (
-      <div className="clay-well mt-2 flex items-start gap-1 px-3.5 py-2.5 text-sm">
+      <div className="surface-muted mt-2 flex items-start gap-1 px-3.5 py-2.5 text-sm">
         <p className="min-w-0 flex-1 whitespace-pre-line break-words">
           <span className="font-medium">Note: </span>
           {line.note}
@@ -82,7 +82,7 @@ function LineNote({ line }: { line: CartLine }) {
     <button
       type="button"
       onClick={startEditing}
-      className="mt-1.5 inline-flex min-h-9 cursor-pointer items-center gap-1 rounded-full text-sm font-bold text-primary outline-none hover:underline focus-visible:ring-4 focus-visible:ring-primary/30"
+      className="mt-1.5 inline-flex min-h-9 cursor-pointer items-center gap-1 rounded-full text-sm font-bold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
     >
       <PlusIcon className="size-3.5" />
       Add note
@@ -97,18 +97,18 @@ function CartLineItem({ line }: { line: CartLine }) {
 
   return (
     <li className="flex gap-4 py-6 first:pt-0 last:pb-0">
-      <Link to={`/shop/${line.productId}`} className="shrink-0 rounded-[20px] outline-none focus-visible:ring-4 focus-visible:ring-primary/30">
+      <Link to={`/shop/${line.productId}`} className="shrink-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
         <ProductVisual
           url={line.imageUrl}
           alt={line.productName}
           category={line.category}
-          className="size-20 rounded-[20px] shadow-clay-card sm:size-24"
+          className="size-20 rounded-lg border border-slate-100 sm:size-24"
           iconClassName="size-8"
         />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <Link to={`/shop/${line.productId}`} className="font-heading text-lg font-extrabold hover:text-primary">
+          <Link to={`/shop/${line.productId}`} className="text-base font-semibold transition-colors hover:text-primary sm:text-lg">
             {line.productName}
           </Link>
           {details.length > 0 && (
@@ -129,8 +129,8 @@ function CartLineItem({ line }: { line: CartLine }) {
           )}
           <LineNote line={line} />
         </div>
-        <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
-          <p className="order-2 font-heading text-lg font-black tabular-nums sm:order-1">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:flex-col sm:flex-nowrap sm:items-end">
+          <p className="order-2 text-lg font-bold tabular-nums sm:order-1">
             {total === null ? <span className="text-sm font-medium text-muted-foreground">Quote needed</span> : formatCurrency(total)}
           </p>
           <div className="order-1 flex items-center gap-2 sm:order-2">
@@ -164,8 +164,8 @@ function OrderSummary() {
   const { subtotal, itemCount, quoteLineCount, clear } = useCart()
 
   return (
-    <aside className="clay-panel flex flex-col gap-4 p-6 lg:sticky lg:top-28">
-      <h2 className="text-xl font-extrabold">Order summary</h2>
+    <aside className="surface flex flex-col gap-4 p-6 lg:sticky lg:top-24">
+      <h2 className="text-xl font-semibold">Order summary</h2>
       <dl className="flex flex-col gap-2 text-sm">
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Items</dt>
@@ -184,8 +184,8 @@ function OrderSummary() {
       </dl>
       <Separator />
       <div className="flex items-baseline justify-between">
-        <span className="font-heading font-extrabold">Estimated total</span>
-        <span className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(subtotal)}</span>
+        <span className="font-semibold">Estimated total</span>
+        <span className="text-3xl font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</span>
       </div>
       <p className="flex items-start gap-2 text-xs text-muted-foreground">
         <InfoIcon className="mt-px size-3.5 shrink-0" />
@@ -223,7 +223,7 @@ function MobileCheckoutBar() {
           Estimated total · {pluralize(itemCount, "item")}
           {quoteLineCount > 0 && " + quote"}
         </p>
-        <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
+        <p className="text-xl leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
       </div>
       <Button size="sm" className="h-12" render={<Link to="/checkout" />} nativeButton={false}>
         Checkout
@@ -259,9 +259,9 @@ export function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-      <h1 className="mb-8 text-4xl leading-[1.1] font-black tracking-tight sm:text-5xl">Your cart</h1>
+      <h1 className="mb-8 text-3xl sm:text-4xl">Your cart</h1>
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-8">
-        <section aria-label="Cart items" className="clay-panel p-5 sm:p-8">
+        <section aria-label="Cart items" className="surface p-5 sm:p-8">
           <ul className="divide-y divide-border/70">
             {lines.map((line) => (
               <CartLineItem key={line.key} line={line} />

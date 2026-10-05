@@ -32,7 +32,7 @@ export function ProductGallery({ product, className }: { product: ShopProduct; c
         alt={images.length > 1 ? `${product.name} — image ${selectedIndex + 1} of ${images.length}` : product.name}
         category={product.category}
         eager
-        className="aspect-[4/3] w-full rounded-[32px] shadow-clay-card lg:aspect-square"
+        className="aspect-[4/3] w-full rounded-xl border border-slate-100 shadow-soft lg:aspect-square"
         iconClassName="size-20 sm:size-24"
       />
       {images.length > 1 && (
@@ -57,8 +57,8 @@ export function ProductGallery({ product, className }: { product: ShopProduct; c
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setSelectedIndex(index)}
                 className={cn(
-                  "size-16 shrink-0 cursor-pointer overflow-hidden rounded-2xl bg-muted shadow-clay-card transition-[translate,opacity,box-shadow] outline-none focus-visible:ring-4 focus-visible:ring-primary/30 sm:size-20",
-                  isSelected ? "ring-3 ring-primary" : "opacity-70 hover:-translate-y-0.5 hover:opacity-100"
+                  "size-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-muted transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:size-20",
+                  isSelected ? "border-indigo-500 ring-2 ring-indigo-500" : "opacity-70 hover:border-slate-300 hover:opacity-100"
                 )}
               >
                 <img src={image.url} alt="" loading="lazy" decoding="async" className="size-full object-cover" />

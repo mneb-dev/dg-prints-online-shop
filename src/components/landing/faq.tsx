@@ -7,8 +7,9 @@ import { BUSINESS, POLICY } from "@/lib/business-info"
 
 function MoreLink({ to, children }: { to: string; children: ReactNode }) {
   return (
-    <Link to={to} className="mt-3 inline-flex font-bold text-primary underline-offset-4 hover:underline">
-      {children} →
+    <Link to={to} className="group/more mt-3 inline-flex items-center gap-1 font-semibold text-primary underline-offset-4 hover:underline">
+      {children}
+      <span aria-hidden className="transition-transform group-hover/more:translate-x-1 motion-reduce:transition-none">→</span>
     </Link>
   )
 }
@@ -103,11 +104,12 @@ const FAQS: Array<{ question: string; answer: ReactNode }> = [
 
 export function Faq() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="mx-auto max-w-3xl scroll-mt-28 px-4 py-20 sm:px-6 sm:py-28">
+    <section id="faq" aria-labelledby="faq-title" className="mx-auto max-w-3xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
       <SectionHeading
         id="faq-title"
         eyebrow="FAQ"
-        title="Questions, answered"
+        title="Questions,"
+        highlight="answered"
         align="center"
       />
       <Accordion>

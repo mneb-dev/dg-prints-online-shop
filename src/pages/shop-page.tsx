@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { ChevronRightIcon, PackageSearchIcon, RotateCwIcon, XIcon, type LucideIcon } from "lucide-react"
 import { Link, useSearchParams } from "react-router-dom"
 
-import { ClayOrb } from "@/components/clay-orb"
+import { IconBadge } from "@/components/icon-badge"
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card"
 import { Pagination } from "@/components/shop/pagination"
 import { ActiveFilters, ShopToolbar } from "@/components/shop/shop-toolbar"
@@ -90,7 +90,7 @@ export function ShopPage() {
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-muted-foreground">
             <li>
-              <Link to="/" className="rounded-full outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30">
+              <Link to="/" className="rounded-full outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                 Home
               </Link>
             </li>
@@ -101,7 +101,7 @@ export function ShopPage() {
                   <button
                     type="button"
                     onClick={() => updateParams({ category: "", page: 1 })}
-                    className="cursor-pointer rounded-full outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
+                    className="cursor-pointer rounded-full outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                   >
                     Shop
                   </button>
@@ -118,7 +118,7 @@ export function ShopPage() {
             )}
           </ol>
         </nav>
-        <h1 className="text-3xl leading-[1.1] font-black tracking-tight text-balance sm:text-4xl">
+        <h1 className="text-3xl leading-[1.1] font-bold tracking-tight text-balance sm:text-4xl">
           {category || "All products"}
         </h1>
       </header>
@@ -201,7 +201,7 @@ function BreadcrumbSeparator() {
   )
 }
 
-/** Clay card for the empty and error states. */
+/** White card for the empty and error states. */
 function ShopMessage({
   icon,
   title,
@@ -214,10 +214,10 @@ function ShopMessage({
   children?: ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-[32px] bg-card/75 px-6 py-16 text-center shadow-clay-card backdrop-blur-xl">
-      <ClayOrb icon={icon} round />
+    <div className="surface flex flex-col items-center gap-4 px-6 py-16 text-center">
+      <IconBadge icon={icon} size="lg" />
       <div className="max-w-sm">
-        <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">{title}</h2>
+        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
         {description && <p className="mt-2 font-medium text-muted-foreground">{description}</p>}
       </div>
       {children}
