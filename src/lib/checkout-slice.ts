@@ -18,6 +18,8 @@ export type ShippingInfo = {
 export type CheckoutForm = {
   name: string
   phone: string
+  /** Asked only for carts paid online — passed to PayMongo for billing and the receipt, not stored. */
+  email: string
   street: string
   barangay: string
   city: string
@@ -93,7 +95,7 @@ export const placeOrder = createAsyncThunk<
 >("checkout/placeOrder", async ({ form, lines, website, paymentMethod }, { rejectWithValue }) => {
   try {
     const { data } = await apiClient.post<PlaceOrderResult>("/shop/orders", {
-      customer: { name: form.name, phone: form.phone },
+      customer: { name: form.name, phone: form.phone, email: form.email },
       address: { street: form.street, barangay: form.barangay, city: form.city, province: form.province, zip: form.zip },
       // Prices are sent only so the server can spot changes — it recalculates everything itself.
       items: lines.map((line) => ({

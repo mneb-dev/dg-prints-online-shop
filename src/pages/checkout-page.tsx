@@ -39,14 +39,21 @@ import { cn, formatCurrency, pluralize } from "@/lib/utils"
 type FieldKey = keyof CheckoutForm
 
 // Order matters: it's the order errors are checked and scrolled to.
-const FIELDS: FieldKey[] = ["name", "phone", "street", "barangay", "city", "province", "zip"]
+const FIELDS: FieldKey[] = ["name", "phone", "email", "street", "barangay", "city", "province", "zip"]
 
-function validate(form: CheckoutForm): Partial<Record<FieldKey, string>> {
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+/** `needsPayment`: the email is only asked for (and required) when the cart is paid online. */
+function validate(form: CheckoutForm, needsPayment: boolean): Partial<Record<FieldKey, string>> {
   const errors: Partial<Record<FieldKey, string>> = {}
   if (!form.name.trim()) errors.name = "Enter your full name."
   else if (form.name.trim().length > 60) errors.name = "Use at most 60 characters."
   if (!form.phone.trim()) errors.phone = "Enter your mobile number."
   else if (!isValidPhMobileNumber(form.phone)) errors.phone = "Enter a valid PH mobile number, e.g. 0917 123 4567."
+  if (needsPayment) {
+    if (!form.email.trim()) errors.email = "Enter your email for your payment receipt."
+    else if (!EMAIL_PATTERN.test(form.email.trim())) errors.email = "Enter a valid email, e.g. juan@gmail.com."
+  }
   if (!form.street.trim()) errors.street = "Enter your house number and street."
   if (!form.barangay.trim()) errors.barangay = "Enter your barangay."
   if (!form.city.trim()) errors.city = "Enter your city or municipality."
@@ -137,7 +144,7 @@ export function CheckoutPage() {
 
   if (lineCount === 0) return <Navigate to="/cart" replace />
 
-  const errors = validate(form)
+  const errors = validate(form, needsPayment)
   const visibleError = (key: FieldKey) => (touched[key] ? errors[key] : undefined)
   const region: ShippingRegion | undefined = shipping?.provinces.find((p) => p.name === form.province)?.region
   const shippingFee = region && shipping ? shipping.rates[region] : null
@@ -264,6 +271,21 @@ export function CheckoutPage() {
             <FormField id="checkout-phone" label="Mobile number" error={visibleError("phone")} className="sm:col-span-2">
               <Input {...fieldProps("phone")} type="tel" inputMode="tel" autoComplete="tel" placeholder="0917 123 4567" maxLength={16} />
             </FormField>
+            {needsPayment && (
+              <FormField id="checkout-email" label="Email" error={visibleError("email")} className="sm:col-span-2">
+                <Input
+                  {...fieldProps("email")}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="juan@gmail.com"
+                  maxLength={254}
+                />
+                {!visibleError("email") && (
+                  <p className="text-xs text-muted-foreground">For your payment receipt from PayMongo.</p>
+                )}
+              </FormField>
+            )}
             <p className="text-xs text-muted-foreground sm:col-span-2">
               {hasSavedDetails ? "Filled in from your last order on this device. " : "Saved on this device for your next order. "}
               {hasSavedDetails && (

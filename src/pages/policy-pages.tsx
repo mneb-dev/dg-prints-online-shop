@@ -321,8 +321,10 @@ export function PrivacyPage() {
             barangay, city or municipality, province, and ZIP code), the items you order, and any notes you add.
           </li>
           <li>
-            <strong>When you pay online:</strong> your payment is made on GCash or Maya through PayMongo. We receive the
-            payment status and reference. We never see your PIN, one-time password (OTP), or account balance.
+            <strong>When you pay online:</strong> your email address. We pass it to PayMongo, together with your name
+            and mobile number, for your payment and so PayMongo can send you a receipt. We don't keep your email
+            ourselves. Your payment is made on GCash or Maya through PayMongo. We receive the payment status and
+            reference, and we never see your PIN, one-time password (OTP), or account balance.
           </li>
           <li>
             <strong>When you message us on Facebook:</strong> whatever you send us in Messenger. Meta's own privacy
@@ -347,7 +349,7 @@ export function PrivacyPage() {
 
       <PolicySection title="Who we share it with">
         <ul>
-          <li>PayMongo, and GCash or Maya, to process your payment.</li>
+          <li>PayMongo, and GCash or Maya: your name, mobile number and email, to process your payment and send your receipt.</li>
           <li>Our courier: your name, mobile number and address, so they can deliver your order.</li>
           <li>
             The service providers that host our website and order database. Their servers may be outside the
@@ -359,8 +361,8 @@ export function PrivacyPage() {
 
       <PolicySection title="What's saved on your device">
         <p>
-          This shop uses your browser's storage, not cookies, to remember your cart and your light/dark theme. After
-          you place an order, it also remembers your name, mobile number and address on this device, so you don't have
+          This shop uses your browser's storage, not cookies, to remember your cart. After
+          you place an order, it also remembers your name, mobile number, email and address on this device, so you don't have
           to type them again next time. This stays on your device and isn't sent anywhere until you place another
           order. On a shared phone or computer, you can remove it:
         </p>

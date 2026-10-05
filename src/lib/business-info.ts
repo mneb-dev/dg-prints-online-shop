@@ -28,7 +28,7 @@ export const BUSINESS = {
  * them before the pages go live. */
 export const POLICY = {
   /** Last time the policy pages were changed — update whenever their wording changes. */
-  lastUpdated: "October 5, 2026",
+  lastUpdated: "October 6, 2026",
   /** Days after delivery to report a defective, wrong or damaged item. */
   claimDays: 7,
   /** Working days to process an approved refund (reaching the account then depends on GCash/Maya). */

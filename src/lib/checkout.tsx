@@ -41,6 +41,7 @@ const FORM_STORAGE_KEY = "dgprints_shop_checkout"
 export const EMPTY_CHECKOUT_FORM: CheckoutForm = {
   name: "",
   phone: "",
+  email: "",
   street: "",
   barangay: "",
   city: "",
