@@ -17,13 +17,6 @@
       100% { transform: scale(1); }
     }
 
-    /* Gentle breathing for decorative floating cards (hero showcase). Decoration only. */
-    --animate-float-pulse: float-pulse 4s ease-in-out infinite;
-    @keyframes float-pulse {
-      0%, 100% { transform: translateY(0); opacity: 1; }
-      50% { transform: translateY(-6px); opacity: 0.92; }
-    }
-
     --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
     --font-heading: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
@@ -188,22 +181,6 @@
     &:hover { translate: none; }
   }
 }
-/* Isometric showcase: a perspective parent and a tilted child that eases towards the viewer. */
-@utility perspective-hero {
-  perspective: 2000px;
-}
-@utility iso-tilt {
-  transform: rotateX(5deg) rotateY(-12deg);
-  transform-style: preserve-3d;
-  transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out);
-  &:hover {
-    transform: rotateX(2deg) rotateY(-8deg);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    transform: none;
-    &:hover { transform: none; }
-  }
-}
 
 @layer utilities {
   .bg-brand-gradient {
@@ -215,12 +192,5 @@
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-  }
-}
-
-/* Decorative motion is optional: switch it off for people who ask for less motion. */
-@media (prefers-reduced-motion: reduce) {
-  .animate-float-pulse {
-    animation: none !important;
   }
 }
