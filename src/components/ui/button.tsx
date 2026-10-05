@@ -3,30 +3,31 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-// Clay buttons: chunky, super-rounded, lift on hover and squish when pressed. Every variant shares
-// the physics; only the surface changes. All sizes meet the 44px touch target.
+// Corporate Trust buttons: crisp rounded-lg, a gradient primary that lifts on hover, and white
+// secondaries with a hairline border. Every size meets the 44px touch target. Pass `rounded-full`
+// for pill CTAs (hero, final CTA).
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-[20px] border border-transparent bg-clip-padding font-bold tracking-wide whitespace-nowrap transition-[translate,scale,box-shadow,background-color,color,border-color] duration-200 outline-none select-none hover:-translate-y-1 focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.92] active:not-aria-[haspopup]:translate-y-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-4 aria-invalid:ring-destructive/25 motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding font-semibold whitespace-nowrap transition-all duration-200 ease-out outline-none select-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-2 aria-invalid:ring-destructive/40 motion-reduce:transition-colors [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5",
   {
     variants: {
       variant: {
         default:
-          "bg-brand-gradient text-primary-foreground shadow-clay-button hover:shadow-clay-button-hover active:shadow-clay-pressed",
+          "bg-brand-gradient text-primary-foreground shadow-cta hover:-translate-y-0.5 hover:shadow-cta-hover motion-reduce:hover:translate-y-0",
         secondary:
-          "bg-card text-foreground shadow-clay-card hover:shadow-clay-card-hover active:shadow-clay-pressed aria-expanded:bg-clay-well aria-expanded:shadow-clay-pressed",
+          "border-slate-200 bg-card text-slate-700 shadow-xs hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 aria-expanded:border-slate-300 aria-expanded:bg-slate-50",
         outline:
-          "border-2 border-primary/20 bg-transparent text-primary hover:border-primary hover:bg-primary/5 aria-expanded:border-primary aria-expanded:bg-primary/5",
+          "border-indigo-200 bg-transparent text-primary hover:border-indigo-300 hover:bg-indigo-50 aria-expanded:bg-indigo-50",
         ghost:
-          "text-foreground hover:bg-primary/10 hover:text-primary aria-expanded:bg-primary/10 aria-expanded:text-primary",
+          "text-slate-600 hover:bg-indigo-50 hover:text-primary aria-expanded:bg-indigo-50 aria-expanded:text-primary",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/15 focus-visible:ring-destructive/25 active:shadow-clay-pressed",
+          "bg-destructive/10 text-destructive hover:bg-destructive/15 focus-visible:ring-destructive/40",
       },
       size: {
-        sm: "h-11 gap-2 px-5 text-sm [&_svg:not([class*='size-'])]:size-4",
-        default: "h-14 gap-2 px-7 text-base",
-        lg: "h-16 gap-2.5 px-8 text-lg",
+        sm: "h-11 gap-1.5 px-4 text-sm [&_svg:not([class*='size-'])]:size-4",
+        default: "h-12 gap-2 px-6 text-[0.95rem]",
+        lg: "h-14 gap-2 px-8 text-base",
         icon: "size-11 rounded-full",
-        "icon-sm": "size-11 rounded-2xl [&_svg:not([class*='size-'])]:size-4",
+        "icon-sm": "size-11 [&_svg:not([class*='size-'])]:size-4",
       },
     },
     defaultVariants: {

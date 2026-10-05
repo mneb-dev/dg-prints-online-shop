@@ -1,10 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/nunito";
-@import "@fontsource-variable/dm-sans";
+@import "@fontsource-variable/plus-jakarta-sans";
 
-/* The shop is light-only (clay design system): nothing ever sets `.dark`. Keep this variant so the
+/* The shop is light-only (Corporate Trust): nothing ever sets `.dark`. Keep this variant so the
    `dark:` classes left in the shadcn ui/* files stay inert instead of following the OS setting. */
 @custom-variant dark (&:is(.dark *));
 
@@ -13,65 +12,31 @@
     --animate-cart-bump: cart-bump 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
     @keyframes cart-bump {
       0% { transform: scale(1); }
-      35% { transform: scale(1.35) rotate(-8deg); }
-      65% { transform: scale(0.92) rotate(4deg); }
+      35% { transform: scale(1.3) rotate(-8deg); }
+      65% { transform: scale(0.94) rotate(4deg); }
       100% { transform: scale(1); }
     }
 
-    /* Clay physics: zero-gravity drift, slow orbit, gentle inflate, and ambient blob wander. */
-    --animate-clay-float: clay-float 8s ease-in-out infinite;
-    --animate-clay-float-delayed: clay-float-delayed 10s ease-in-out infinite;
-    --animate-clay-float-slow: clay-float-slow 12s ease-in-out infinite;
-    --animate-clay-breathe: clay-breathe 6s ease-in-out infinite;
-    --animate-clay-blob: clay-blob 18s ease-in-out infinite;
-    --animate-clay-blob-alt: clay-blob-alt 22s ease-in-out infinite;
-    @keyframes clay-float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(2deg); }
-    }
-    @keyframes clay-float-delayed {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(-2deg); }
-    }
-    @keyframes clay-float-slow {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-30px) rotate(5deg); }
-    }
-    @keyframes clay-breathe {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
-    @keyframes clay-blob {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(4vw, -5vh) scale(1.08); }
-      66% { transform: translate(-3vw, 4vh) scale(0.95); }
-    }
-    @keyframes clay-blob-alt {
-      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      33% { transform: translate(-5vw, 4vh) rotate(-6deg) scale(0.94); }
-      66% { transform: translate(3vw, -5vh) rotate(4deg) scale(1.06); }
+    /* Gentle breathing for decorative floating cards (hero showcase). Decoration only. */
+    --animate-float-pulse: float-pulse 4s ease-in-out infinite;
+    @keyframes float-pulse {
+      0%, 100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(-6px); opacity: 0.92; }
     }
 
-    --font-sans: 'DM Sans Variable', sans-serif;
-    --font-heading: 'Nunito Variable', sans-serif;
+    --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
-    /* Clay shadow stacks — values live on :root (--clay-*-shadow) so they stay in one place. */
-    --shadow-clay-surface: var(--clay-surface-shadow);
-    --shadow-clay-card: var(--clay-card-shadow);
-    --shadow-clay-card-hover: var(--clay-card-hover-shadow);
-    --shadow-clay-button: var(--clay-button-shadow);
-    --shadow-clay-button-hover: var(--clay-button-hover-shadow);
-    --shadow-clay-pressed: var(--clay-pressed-shadow);
+    /* Indigo-tinted elevation. Values live on :root (--elevation-*) so they stay in one place. */
+    --shadow-soft: var(--elevation-soft);
+    --shadow-lift: var(--elevation-lift);
+    --shadow-cta: var(--elevation-cta);
+    --shadow-cta-hover: var(--elevation-cta-hover);
+    --shadow-glow: var(--elevation-glow);
 
-    --color-clay-violet: #7C3AED;
-    --color-clay-pink: #DB2777;
-    --color-clay-sky: #0EA5E9;
-    --color-clay-emerald: #10B981;
-    --color-clay-amber: #F59E0B;
-    /* Recessed surfaces: inputs, open accordion panels, the footer's seller box. */
-    --color-clay-well: var(--clay-well);
-    --color-brand-to: var(--brand-to);
     --color-brand-from: var(--brand-from);
+    --color-brand-to: var(--brand-to);
+    --color-success: var(--success);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -95,59 +60,54 @@
     --color-status-ready: var(--status-ready);
     --color-status-success: var(--status-success);
     --color-status-warning: var(--status-warning);
-    /* Super-rounded floor: nothing in the shop is sharper than 20px, so even the radii shadcn uses
-       internally (sm/md/lg) clear it. 2xl stays 16px for icon tiles and fields, as the spec allows. */
-    --radius-sm: 20px;
-    --radius-md: 20px;
-    --radius-lg: 20px;
-    --radius-xl: 24px;
+    /* Cards are rounded-xl (12px), inputs rounded-lg (8px). */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
     --radius-2xl: 16px;
     --radius-3xl: 24px;
     --radius-4xl: 32px;
 }
 
-/* "Candy shop" palette, mapped onto the shadcn variables so every page picks it up.
-   Spec name → token: canvas = --background, text = --foreground, muted = --muted-foreground,
-   accent = --primary (violet), accent-alt = --color-clay-pink. Use the shadcn names in code. */
+/* Corporate Trust palette, mapped onto the shadcn variables so every page picks it up.
+   Spec name → token: background = --background (slate 50), surface = --card, primary = indigo 600,
+   secondary = --brand-to (violet 600), text = --foreground, muted = --muted-foreground. */
 :root {
-    --background: #F4F1FA;
-    --foreground: #332F3A;
-    --card: #ffffff;
-    --card-foreground: #332F3A;
-    --popover: #ffffff;
-    --popover-foreground: #332F3A;
-    --primary: #7C3AED;
-    --primary-foreground: #ffffff;
-    --secondary: #EDE9F6;
-    --secondary-foreground: #332F3A;
-    --muted: #EFEBF5;
-    /* Never lighter than this — it's the minimum readable grey on the lavender canvas. */
-    --muted-foreground: #635F69;
-    --accent: #EDE5FD;
-    --accent-foreground: #6D28D9;
+    --background: #F8FAFC;
+    --foreground: #0F172A;
+    --card: #FFFFFF;
+    --card-foreground: #0F172A;
+    --popover: #FFFFFF;
+    --popover-foreground: #0F172A;
+    --primary: #4F46E5;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F1F5F9;
+    --secondary-foreground: #334155;
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+    --accent: #EEF2FF;
+    --accent-foreground: #4338CA;
+    --success: #10B981;
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.985 0 0);
-    --border: #E4DEEE;
-    --input: #DDD6EA;
-    --ring: #7C3AED;
-    /* bg-brand-gradient is the clay button gradient: light violet into primary violet. */
-    --brand-from: #A78BFA;
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --ring: #6366F1;
+    /* bg-brand-gradient / text-brand-gradient: indigo 600 into violet 600. */
+    --brand-from: #4F46E5;
     --brand-to: #7C3AED;
     --status-info: oklch(0.48 0.12 219);
     --status-progress: oklch(0.65 0.18 55);
     --status-ready: oklch(0.65 0.14 205);
     --status-success: oklch(0.63 0.18 145);
     --status-warning: oklch(0.71 0.18 75);
-    --radius: 20px;
-    /* Clay shadow stacks — top-left light, coloured ambient occlusion below. */
-    --clay-surface-shadow: 30px 30px 60px #cdc6d9, -30px -30px 60px #ffffff, inset 10px 10px 20px rgba(139, 92, 246, 0.05), inset -10px -10px 20px rgba(255, 255, 255, 0.8);
-    --clay-card-shadow: 16px 16px 32px rgba(160, 150, 180, 0.2), -10px -10px 24px rgba(255, 255, 255, 0.9), inset 6px 6px 12px rgba(139, 92, 246, 0.03), inset -6px -6px 12px rgba(255, 255, 255, 1);
-    --clay-card-hover-shadow: 22px 26px 44px rgba(160, 150, 180, 0.3), -12px -12px 28px rgba(255, 255, 255, 1), inset 6px 6px 12px rgba(139, 92, 246, 0.04), inset -6px -6px 12px rgba(255, 255, 255, 1);
-    --clay-button-shadow: 12px 12px 24px rgba(139, 92, 246, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.4), inset 4px 4px 8px rgba(255, 255, 255, 0.4), inset -4px -4px 8px rgba(0, 0, 0, 0.1);
-    --clay-button-hover-shadow: 16px 18px 32px rgba(139, 92, 246, 0.4), -8px -8px 18px rgba(255, 255, 255, 0.5), inset 4px 4px 8px rgba(255, 255, 255, 0.45), inset -4px -4px 8px rgba(0, 0, 0, 0.1);
-    --clay-pressed-shadow: inset 10px 10px 20px #d9d4e3, inset -10px -10px 20px #ffffff;
-    /* Recessed surfaces: inputs, open accordion panels, the footer's seller box. */
-    --clay-well: #EFEBF5;
+    --radius: 0.75rem;
+    --elevation-soft: 0 4px 20px -2px rgb(79 70 229 / 0.1);
+    --elevation-lift: 0 10px 25px -5px rgb(79 70 229 / 0.15), 0 8px 10px -6px rgb(79 70 229 / 0.1);
+    --elevation-cta: 0 4px 14px 0 rgb(79 70 229 / 0.3);
+    --elevation-cta-hover: 0 8px 22px -2px rgb(79 70 229 / 0.4);
+    --elevation-glow: 0 0 20px rgb(79 70 229 / 0.5);
     color-scheme: light;
 }
 
@@ -156,11 +116,10 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background leading-relaxed text-foreground antialiased;
     }
-  /* Nunito's rounded terminals for headings; DM Sans (font-sans) for everything else. */
   h1, h2, h3, h4 {
-    @apply font-heading;
+    @apply font-heading leading-[1.1] font-bold tracking-[-0.02em] text-balance;
     }
   html {
     @apply font-sans;
@@ -202,52 +161,66 @@
     }
 }
 
-/* Shared clay surfaces for page sections, so pages don't repeat long class strings.
-   clay-panel: glass card that floats over the blobs (sections, summaries, policy text).
-   clay-well: recessed box pressed into the surface (notes, info messages, read-only values). */
-@utility clay-panel {
-  border-radius: 24px;
-  background-color: color-mix(in oklab, var(--card) 75%, transparent);
-  box-shadow: var(--clay-card-shadow);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  @media (width >= 40rem) {
-    border-radius: 32px;
+/* Shared surfaces, so pages don't repeat long class strings.
+   surface: the white elevated card (sections, summaries, policy text, chips).
+   surface-muted: a quiet slate-50 box inside a surface (notes, info messages, read-only values). */
+@utility surface {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-slate-100);
+  background-color: var(--card);
+  box-shadow: var(--elevation-soft);
+}
+@utility surface-muted {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background-color: var(--background);
+}
+/* lift: interactive cards rise and their shadow deepens on hover. */
+@utility lift {
+  transition-property: translate, box-shadow, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: var(--ease-out);
+  &:hover {
+    translate: 0 -0.25rem;
+    box-shadow: var(--elevation-lift);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &:hover { translate: none; }
   }
 }
-/* clay-raised: solid white bulge for small floating chips and pills. */
-@utility clay-raised {
-  background-color: var(--card);
-  box-shadow: var(--clay-card-shadow);
+/* Isometric showcase: a perspective parent and a tilted child that eases towards the viewer. */
+@utility perspective-hero {
+  perspective: 2000px;
 }
-@utility clay-well {
-  border-radius: 20px;
-  background-color: var(--clay-well);
-  box-shadow: var(--clay-pressed-shadow);
+@utility iso-tilt {
+  transform: rotateX(5deg) rotateY(-12deg);
+  transform-style: preserve-3d;
+  transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out);
+  &:hover {
+    transform: rotateX(2deg) rotateY(-8deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+    &:hover { transform: none; }
+  }
 }
 
 @layer utilities {
   .bg-brand-gradient {
     background-image: linear-gradient(135deg, var(--brand-from), var(--brand-to));
   }
-  /* Hero-size gradient text only (text-5xl and up) — smaller sizes lose readability. */
-  .text-clay-gradient {
-    background-image: linear-gradient(120deg, var(--foreground) 20%, var(--primary) 60%, var(--color-clay-pink));
+  /* Gradient text for headline emphasis (text-2xl and up). */
+  .text-brand-gradient {
+    background-image: linear-gradient(90deg, var(--brand-from), var(--brand-to));
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
   }
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
 }
 
-/* Clay motion is decoration: switch it all off for people who ask for less motion. */
+/* Decorative motion is optional: switch it off for people who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
-  [class*="animate-clay-"] {
+  .animate-float-pulse {
     animation: none !important;
   }
 }

@@ -2,8 +2,8 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-/** Glass-clay card: a blurred white surface floating over the background blobs. `interactive` cards
- *  float up towards the viewer on hover. Children render above any absolutely-positioned decoration. */
+/** Elevated white card with a soft indigo-tinted shadow. `interactive` cards lift on hover.
+ *  Children render above any absolutely-positioned decoration. */
 function Card({
   className,
   size = "default",
@@ -19,8 +19,8 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card relative overflow-hidden clay-panel text-sm text-card-foreground transition-[translate,box-shadow] duration-500 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)] data-[size=sm]:[--card-spacing:--spacing(4)] sm:data-[size=sm]:[--card-spacing:--spacing(5)]",
-        interactive && "hover:-translate-y-2 hover:shadow-clay-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        "group/card relative overflow-hidden surface text-sm text-card-foreground [--card-spacing:--spacing(5)] sm:[--card-spacing:--spacing(7)] data-[size=sm]:[--card-spacing:--spacing(4)] sm:data-[size=sm]:[--card-spacing:--spacing(5)]",
+        interactive && "lift",
         className
       )}
       {...props}
@@ -50,7 +50,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-xl leading-snug font-extrabold tracking-tight group-data-[size=sm]/card:text-lg",
+        "font-heading text-lg leading-snug font-semibold tracking-tight group-data-[size=sm]/card:text-base",
         className
       )}
       {...props}
@@ -62,7 +62,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm leading-relaxed font-medium text-muted-foreground", className)}
+      className={cn("text-sm leading-relaxed text-muted-foreground", className)}
       {...props}
     />
   )
@@ -98,7 +98,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "m-2 flex items-center clay-well p-(--card-spacing) sm:m-3",
+        "flex items-center border-t border-slate-100 bg-slate-50/70 px-(--card-spacing) py-4",
         className
       )}
       {...props}

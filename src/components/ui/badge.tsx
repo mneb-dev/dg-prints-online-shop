@@ -4,18 +4,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-// Clay pills: always fully round, Nunito, and bold enough to read at badge size.
+// Rounded pills: semibold, on soft tinted backgrounds.
 const badgeVariants = cva(
-  "group/badge inline-flex h-7 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full px-3 font-heading text-xs font-extrabold whitespace-nowrap transition-[background-color,box-shadow] outline-none focus-visible:ring-4 focus-visible:ring-primary/30 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:pointer-events-none [&>svg]:size-3.5!",
+  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full px-2.5 text-xs font-semibold whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:pointer-events-none [&>svg]:size-3.5!",
   {
     variants: {
       variant: {
-        default: "bg-brand-gradient text-primary-foreground shadow-clay-button",
-        soft: "bg-accent text-accent-foreground",
-        ink: "bg-foreground text-background",
-        glass: "bg-card/90 text-foreground backdrop-blur-md",
-        success: "bg-clay-emerald/15 text-emerald-700",
-        warning: "bg-clay-amber/15 text-amber-700",
+        default: "bg-primary text-primary-foreground",
+        soft: "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100 ring-inset",
+        ink: "bg-slate-900 text-white",
+        glass: "bg-white/90 text-slate-700 shadow-soft ring-1 ring-slate-200/70 backdrop-blur-md ring-inset",
+        success: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 ring-inset",
+        warning: "bg-amber-50 text-amber-700 ring-1 ring-amber-100 ring-inset",
         plain: "",
       },
     },

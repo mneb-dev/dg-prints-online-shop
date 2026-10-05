@@ -7,7 +7,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty"
       className={cn(
-        "clay-panel flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center text-balance",
+        "surface flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 px-6 py-12 text-center text-balance",
         className
       )}
       {...props}
@@ -31,8 +31,8 @@ const emptyMediaVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        // Clay orb: violet gradient bubble, like ClayOrb.
-        icon: "flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-600 text-white shadow-clay-button [&_svg:not([class*='size-'])]:size-6",
+        // Same look as IconBadge: soft indigo tile.
+        icon: "flex size-14 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 ring-inset [&_svg:not([class*='size-'])]:size-6",
       },
     },
     defaultVariants: {
@@ -61,7 +61,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty-title"
       className={cn(
-        "font-heading text-xl font-extrabold tracking-tight",
+        "font-heading text-xl font-bold tracking-tight",
         className
       )}
       {...props}

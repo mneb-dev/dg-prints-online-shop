@@ -38,7 +38,7 @@ function QuantityInput({
         step="1"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={cn("h-11 w-16 min-w-16 px-2 text-center font-heading font-extrabold", className)}
+        className={cn("h-11 w-16 min-w-16 px-2 text-center font-semibold tabular-nums", className)}
         {...props}
       />
       <Button

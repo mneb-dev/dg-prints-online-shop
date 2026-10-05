@@ -6,7 +6,7 @@ function ToggleGroup({ className, ...props }: ToggleGroupPrimitive.Props<string>
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
-      className={cn("flex flex-wrap gap-1.5", className)}
+      className={cn("flex flex-wrap gap-2", className)}
       {...props}
     />
   )
