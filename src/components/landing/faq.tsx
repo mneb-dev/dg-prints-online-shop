@@ -28,9 +28,8 @@ const FAQS: Array<{ question: string; answer: ReactNode }> = [
     answer: (
       <>
         <p>
-          Open a product and choose your size, quantity and options — the price updates as you pick. Shipping is added
-          at checkout based on your region, and the total you see before paying is the full amount you'll be charged.
-          Items marked “Quote” are priced on request, and we confirm the price with you before making them.
+          Every product shows its price. Pick your options and you'll see the total right away, and checkout shows the
+          final amount, shipping included, before you pay.
         </p>
         <MoreLink to="/terms">Read our terms of sale</MoreLink>
       </>
