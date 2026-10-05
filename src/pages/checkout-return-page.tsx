@@ -79,10 +79,10 @@ export function CheckoutReturnPage() {
             back and finish paying.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button variant="gradient" size="lg" className="h-11 px-6" onClick={checkAgain}>
+            <Button variant="clay" size="clay-sm" className="px-6" onClick={checkAgain}>
               Check again
             </Button>
-            <Button variant="outline" size="lg" className="h-11 px-6" render={<a href={view.checkoutUrl} />} nativeButton={false}>
+            <Button variant="clay-secondary" size="clay-sm" className="px-6" render={<a href={view.checkoutUrl} />} nativeButton={false}>
               Return to payment
             </Button>
           </div>
@@ -96,7 +96,7 @@ export function CheckoutReturnPage() {
             is still here — you can try again.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button variant="gradient" size="lg" className="h-11 px-6" render={<Link to="/checkout" />} nativeButton={false}>
+            <Button variant="clay" size="clay-sm" className="px-6" render={<Link to="/checkout" />} nativeButton={false}>
               Back to checkout
             </Button>
           </div>
@@ -114,14 +114,14 @@ export function CheckoutReturnPage() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             {view.kind === "error" && (
-              <Button variant="gradient" size="lg" className="h-11 px-6" onClick={checkAgain}>
+              <Button variant="clay" size="clay-sm" className="px-6" onClick={checkAgain}>
                 Try again
               </Button>
             )}
             <Button
-              variant={view.kind === "error" ? "outline" : "gradient"}
-              size="lg"
-              className="h-11 px-6"
+              variant={view.kind === "error" ? "clay-secondary" : "clay"}
+              size="clay-sm"
+              className="px-6"
               render={<Link to="/cart" />}
               nativeButton={false}
             >

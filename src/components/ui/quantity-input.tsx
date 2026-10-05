@@ -25,8 +25,8 @@ function QuantityInput({
     <div className="flex items-center gap-1">
       <Button
         type="button"
-        variant="outline"
-        size="icon-xs"
+        variant="clay-secondary"
+        size="icon-sm"
         aria-label="Decrease quantity"
         onClick={() => step(-1)}
       >
@@ -43,8 +43,8 @@ function QuantityInput({
       />
       <Button
         type="button"
-        variant="outline"
-        size="icon-xs"
+        variant="clay-secondary"
+        size="icon-sm"
         aria-label="Increase quantity"
         onClick={() => step(1)}
       >

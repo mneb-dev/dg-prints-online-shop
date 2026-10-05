@@ -34,7 +34,7 @@ export function OrderConfirmation({ orderNumber, total, paid = false }: PlacedOr
           : "We'll message or call you to confirm your order and arrange payment. Keep your order number handy."}
       </p>
 
-      <Button variant="gradient" size="lg" className="mt-8 h-11 px-6" render={<Link to="/shop" />} nativeButton={false}>
+      <Button variant="clay" size="clay-sm" className="mt-8 px-6" render={<Link to="/shop" />} nativeButton={false}>
         Continue shopping
       </Button>
     </div>

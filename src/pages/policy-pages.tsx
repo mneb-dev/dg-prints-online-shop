@@ -367,7 +367,7 @@ export function PrivacyPage() {
           order. On a shared phone or computer, you can remove it:
         </p>
         <div>
-          <Button variant="outline" onClick={forgetDetails} disabled={forgotten}>
+          <Button variant="clay-secondary" size="clay-sm" onClick={forgetDetails} disabled={forgotten}>
             {forgotten ? "Saved details removed" : "Forget my details on this device"}
           </Button>
         </div>

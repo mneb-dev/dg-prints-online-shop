@@ -505,7 +505,7 @@ export function CheckoutPage() {
             </Link>
             .
           </p>
-          <Button type="submit" variant="gradient" size="lg" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
+          <Button type="submit" variant="clay" size="clay-sm" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>
@@ -516,7 +516,7 @@ export function CheckoutPage() {
             <p className="text-xs text-muted-foreground">{shippingFee === null ? "Total before shipping" : "Total"}</p>
             <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
           </div>
-          <Button type="submit" variant="gradient" size="lg" className="h-12 gap-2 px-5" disabled={!canSubmit}>
+          <Button type="submit" variant="clay" size="clay-sm" className="h-12 gap-2 px-5" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>

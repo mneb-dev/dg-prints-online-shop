@@ -28,8 +28,6 @@ const buttonVariants = cva(
           "rounded-[20px] bg-brand-gradient font-bold tracking-wide text-primary-foreground shadow-clay-button duration-200 hover:-translate-y-1 hover:shadow-clay-button-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
         "clay-secondary":
           "rounded-[20px] bg-card font-bold tracking-wide text-foreground shadow-clay-card duration-200 hover:-translate-y-1 hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
-        "clay-outline":
-          "rounded-[20px] border-2 border-primary/20 bg-transparent font-bold tracking-wide text-primary duration-200 hover:-translate-y-1 hover:border-primary hover:bg-primary/5 focus-visible:ring-4 focus-visible:ring-primary/30 active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
       },
       size: {
         default:

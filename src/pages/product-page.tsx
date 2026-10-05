@@ -380,7 +380,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
           )}
           {priceBreakdown}
         </div>
-        <Button variant="gradient" size="lg" className="h-11 gap-2 px-5" disabled={!canAdd} onClick={() => handleAdd()}>
+        <Button variant="clay" size="clay-sm" className="gap-2 px-5" disabled={!canAdd} onClick={() => handleAdd()}>
           <ShoppingBagIcon className="size-4" />
           Add to cart
         </Button>
@@ -404,7 +404,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
             <StartingPrice product={product} />
           )}
         </div>
-        <Button variant="gradient" size="lg" className="h-12 gap-2 px-6" onClick={handleMobileAdd}>
+        <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-6" onClick={handleMobileAdd}>
           <ShoppingBagIcon className="size-4" />
           Add to cart
         </Button>
@@ -453,7 +453,7 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
                 <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
               )}
             </div>
-            <Button variant="gradient" size="lg" className="h-12 gap-2 px-6" disabled={!canAdd} onClick={(event) => handleAdd(event.currentTarget)}>
+            <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-6" disabled={!canAdd} onClick={(event) => handleAdd(event.currentTarget)}>
               <ShoppingBagIcon className="size-4" />
               Add to cart
             </Button>
@@ -509,7 +509,7 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
         </div>
         {messengerUrl && (
           // Below lg this button lives in the MobileActionBar instead.
-          <Button variant="gradient" size="lg" className="hidden h-11 gap-2 px-5 lg:inline-flex" onClick={handleMessage}>
+          <Button variant="clay" size="clay-sm" className="hidden gap-2 px-5 lg:inline-flex" onClick={handleMessage}>
             <MessageCircleIcon className="size-4" />
             Message us on Facebook
           </Button>
@@ -517,7 +517,7 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
       </div>
       {messengerUrl && (
         <MobileActionBar>
-          <Button variant="gradient" size="lg" className="h-12 flex-1 gap-2" onClick={handleMessage}>
+          <Button variant="clay" size="clay-sm" className="h-12 flex-1 gap-2" onClick={handleMessage}>
             <MessageCircleIcon className="size-4" />
             Message us on Facebook
           </Button>
@@ -549,7 +549,7 @@ export function ProductPage() {
               <EmptyDescription>{detailError}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="outline" render={<Link to="/shop" />} nativeButton={false}>
+              <Button variant="clay-secondary" size="clay-sm" render={<Link to="/shop" />} nativeButton={false}>
                 Back to shop
               </Button>
             </EmptyContent>

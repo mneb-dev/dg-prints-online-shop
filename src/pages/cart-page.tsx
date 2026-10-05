@@ -196,11 +196,11 @@ function OrderSummary() {
       </p>
       <div className="flex flex-col gap-2">
         {/* Below lg this button lives in MobileCheckoutBar instead. */}
-        <Button variant="gradient" size="lg" className="hidden h-11 lg:inline-flex" render={<Link to="/checkout" />} nativeButton={false}>
+        <Button variant="clay" size="clay-sm" className="hidden lg:inline-flex" render={<Link to="/checkout" />} nativeButton={false}>
           Proceed to checkout
           <ArrowRightIcon />
         </Button>
-        <Button variant="ghost" size="lg" className="h-11" render={<Link to="/shop" />} nativeButton={false}>
+        <Button variant="clay-secondary" size="clay-sm" render={<Link to="/shop" />} nativeButton={false}>
           <ArrowLeftIcon />
           Continue shopping
         </Button>
@@ -226,7 +226,7 @@ function MobileCheckoutBar() {
         </p>
         <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
       </div>
-      <Button variant="gradient" size="lg" className="h-12 gap-2 px-5" render={<Link to="/checkout" />} nativeButton={false}>
+      <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-5" render={<Link to="/checkout" />} nativeButton={false}>
         Checkout
         <ArrowRightIcon />
       </Button>
@@ -249,7 +249,7 @@ export function CartPage() {
             <EmptyDescription>Browse the shop and add products to build your order.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="gradient" size="lg" className="h-11 px-5" render={<Link to="/shop" />} nativeButton={false}>
+            <Button variant="clay" size="clay-sm" className="px-5" render={<Link to="/shop" />} nativeButton={false}>
               Shop now
             </Button>
           </EmptyContent>
