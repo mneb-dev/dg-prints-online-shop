@@ -1,4 +1,4 @@
-import { createElement } from "react"
+import { createElement, type ReactNode } from "react"
 import {
   BoxIcon,
   FlagIcon,
@@ -31,13 +31,14 @@ export function CategoryIcon({ category, ...props }: { category: string } & Luci
   return createElement(categoryIcon(category), props)
 }
 
-/** Brand-family gradient pairs — a category always lands on the same one, so a grid of mixed
- *  products gets some variety while staying inside the indigo/violet palette. */
+/** Candy-shop gradient pairs (light 400 → saturated 600) — a category always lands on the same one,
+ *  so a grid of mixed products gets variety while staying on-palette. */
 const TILE_GRADIENTS = [
-  "linear-gradient(135deg, var(--brand-from), var(--brand-to))",
-  "linear-gradient(135deg, oklch(0.55 0.22 262), var(--brand-from))",
-  "linear-gradient(135deg, var(--brand-to), oklch(0.6 0.24 322))",
-  "linear-gradient(135deg, oklch(0.58 0.16 235), oklch(0.55 0.23 285))",
+  "linear-gradient(135deg, #A78BFA, #7C3AED)",
+  "linear-gradient(135deg, #F472B6, #DB2777)",
+  "linear-gradient(135deg, #38BDF8, #0284C7)",
+  "linear-gradient(135deg, #34D399, #059669)",
+  "linear-gradient(135deg, #FBBF24, #D97706)",
 ]
 
 function hash(text: string): number {
@@ -47,15 +48,17 @@ function hash(text: string): number {
 }
 
 /** Fallback product visual for products without images (see ProductVisual), and the category
- *  art on the landing page: a gradient tile with the category's icon. */
+ *  art on the landing page: a gradient tile with the category's icon. `children` overlay it. */
 export function CategoryTile({
   category,
   className,
   iconClassName,
+  children,
 }: {
   category: string
   className?: string
   iconClassName?: string
+  children?: ReactNode
 }) {
   return (
     <div
@@ -63,14 +66,15 @@ export function CategoryTile({
       className={cn("relative flex items-center justify-center overflow-hidden text-white", className)}
       style={{ backgroundImage: TILE_GRADIENTS[hash(category) % TILE_GRADIENTS.length] }}
     >
-      {/* Soft highlight + faint dot texture so the flat gradient reads as a surface. */}
-      <div className="absolute -top-1/3 -left-1/4 size-3/4 rounded-full bg-white/20 blur-2xl" />
+      {/* Soft top-left highlight + faint dot texture so the gradient reads as a moulded surface. */}
+      <div className="absolute -top-1/3 -left-1/4 size-3/4 rounded-full bg-white/25 blur-2xl" />
       <div className="absolute inset-0 bg-[radial-gradient(circle,oklch(1_0_0/0.14)_1px,transparent_1px)] [background-size:14px_14px]" />
       <CategoryIcon
         category={category}
-        className={cn("relative size-12 drop-shadow-sm", iconClassName)}
-        strokeWidth={1.5}
+        className={cn("relative size-12 drop-shadow-md", iconClassName)}
+        strokeWidth={1.75}
       />
+      {children}
     </div>
   )
 }

@@ -1,11 +1,8 @@
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
-import { useTheme } from "@/lib/theme"
-
+// The shop is light-only (clay design system), so toasts are too.
 function Toaster(props: ToasterProps) {
-  const { theme } = useTheme()
-
-  return <Sonner theme={theme} className="toaster group" {...props} />
+  return <Sonner theme="light" className="toaster group" {...props} />
 }
 
 export { Toaster }

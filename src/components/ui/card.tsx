@@ -6,15 +6,25 @@ function Card({
   className,
   size = "default",
   interactive = false,
+  variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm"; interactive?: boolean }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm"
+  interactive?: boolean
+  /** "clay": glass-clay surface (super-rounded, blurred white over the background blobs). */
+  variant?: "default" | "clay"
+}) {
   return (
     <div
       data-slot="card"
       data-size={size}
+      data-variant={variant}
       className={cn(
         "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl border border-border bg-card py-(--card-spacing) text-sm text-card-foreground shadow-[var(--shadow-soft)] transition-[translate,box-shadow] [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         interactive && "hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]",
+        variant === "clay" &&
+          "rounded-[32px] border-0 bg-card/70 shadow-clay-card backdrop-blur-xl duration-500 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)]",
+        variant === "clay" && interactive && "hover:-translate-y-2 hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0",
         className
       )}
       {...props}

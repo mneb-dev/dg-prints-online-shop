@@ -1,44 +1,32 @@
-import { useCallback, useEffect, useState } from "react"
-import { ChevronLeftIcon, ChevronRightIcon, PackageSearchIcon, RotateCwIcon, SearchIcon, XIcon } from "lucide-react"
-import { useSearchParams } from "react-router-dom"
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { ChevronRightIcon, PackageSearchIcon, RotateCwIcon, XIcon, type LucideIcon } from "lucide-react"
+import { Link, useSearchParams } from "react-router-dom"
 
+import { ClayOrb } from "@/components/clay-orb"
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card"
+import { Pagination } from "@/components/shop/pagination"
+import { ActiveFilters, ShopToolbar } from "@/components/shop/shop-toolbar"
 import { Button } from "@/components/ui/button"
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
-import { Input } from "@/components/ui/input"
-import { SHOP_PAGE_SIZE, useCatalog } from "@/lib/catalog"
+import { SHOP_PAGE_SIZE, isShopSort, useCatalog, type ShopSort } from "@/lib/catalog"
 import { cn, pluralize } from "@/lib/utils"
 
 const SEARCH_DEBOUNCE_MS = 300
 
-function CategoryChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: string }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex h-9 shrink-0 cursor-pointer items-center rounded-full border px-4 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 pointer-coarse:h-10",
-        active
-          ? "border-transparent bg-brand-gradient text-primary-foreground shadow-[var(--shadow-button)]"
-          : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      {children}
-    </button>
-  )
-}
+const gridClasses = "grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 lg:gap-8"
 
 export function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const search = searchParams.get("q") ?? ""
   const category = searchParams.get("category") ?? ""
+  const sortParam = searchParams.get("sort") ?? ""
+  const sort: ShopSort = isShopSort(sortParam) ? sortParam : "featured"
   const page = Math.max(1, Number(searchParams.get("page")) || 1)
 
   const { products, total, listStatus, listError, categories, categoriesStatus, loadProducts, loadCategories } =
     useCatalog()
   const [searchDraft, setSearchDraft] = useState(search)
   const [syncedSearch, setSyncedSearch] = useState(search)
+  const resultsRef = useRef<HTMLDivElement>(null)
 
   // Keep the box in sync when the URL changes from outside (back button, a category link) —
   // adjusted during render rather than in an effect, per React's "storing previous props" pattern.
@@ -48,13 +36,14 @@ export function ShopPage() {
   }
 
   const updateParams = useCallback(
-    (next: { q?: string; category?: string; page?: number }) => {
+    (next: { q?: string; category?: string; sort?: ShopSort; page?: number }) => {
       setSearchParams(
         (current) => {
           const params = new URLSearchParams(current)
           for (const [key, value] of Object.entries(next)) {
             if (value === undefined) continue
-            if (value === "" || (key === "page" && value === 1)) params.delete(key)
+            // Defaults stay out of the URL so plain /shop links stay plain.
+            if (value === "" || (key === "page" && value === 1) || (key === "sort" && value === "featured")) params.delete(key)
             else params.set(key, String(value))
           }
           return params
@@ -70,8 +59,8 @@ export function ShopPage() {
   }, [categoriesStatus, loadCategories])
 
   useEffect(() => {
-    void loadProducts({ search, category, page })
-  }, [search, category, page, loadProducts])
+    void loadProducts({ search, category, page, sort })
+  }, [search, category, page, sort, loadProducts])
 
   // Debounce typing into the URL (which is what drives the fetch).
   useEffect(() => {
@@ -80,134 +69,158 @@ export function ShopPage() {
     return () => clearTimeout(timer)
   }, [searchDraft, search, updateParams])
 
+  function clearAll() {
+    setSearchDraft("")
+    updateParams({ q: "", category: "", sort: "featured", page: 1 })
+  }
+
+  function goToPage(next: number) {
+    updateParams({ page: next })
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    resultsRef.current?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" })
+  }
+
   const pageCount = Math.max(1, Math.ceil(total / SHOP_PAGE_SIZE))
   const isLoading = listStatus === "loading" || listStatus === "idle"
   const hasFilters = search !== "" || category !== ""
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mb-6 flex flex-col gap-1">
-        <h1 className="text-3xl font-bold tracking-tight">Shop</h1>
-        <p className="text-muted-foreground">Browse our products and build your order.</p>
-      </div>
+    <div className="mx-auto max-w-7xl px-4 pt-10 pb-8 sm:px-6 sm:pt-14">
+      <header className="mb-8 flex flex-col gap-2 sm:mb-10">
+        <nav aria-label="Breadcrumb">
+          <ol className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+            <li>
+              <Link to="/" className="rounded-full outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30">
+                Home
+              </Link>
+            </li>
+            <BreadcrumbSeparator />
+            {category ? (
+              <>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => updateParams({ category: "", page: 1 })}
+                    className="cursor-pointer rounded-full outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
+                  >
+                    Shop
+                  </button>
+                </li>
+                <BreadcrumbSeparator />
+                <li aria-current="page" className="text-foreground">
+                  {category}
+                </li>
+              </>
+            ) : (
+              <li aria-current="page" className="text-foreground">
+                Shop
+              </li>
+            )}
+          </ol>
+        </nav>
+        <h1 className="text-3xl leading-[1.1] font-black tracking-tight text-balance sm:text-4xl">
+          {category || "All products"}
+        </h1>
+      </header>
 
-      <div className="mb-6 flex flex-col gap-4">
-        <div className="relative max-w-md">
-          <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            value={searchDraft}
-            onChange={(event) => setSearchDraft(event.target.value)}
-            placeholder="Search products"
-            aria-label="Search products"
-            className="h-10 pl-9"
+      <ShopToolbar
+        searchDraft={searchDraft}
+        onSearchChange={setSearchDraft}
+        sort={sort}
+        onSortChange={(next) => updateParams({ sort: next, page: 1 })}
+        categories={categories}
+        category={category}
+        onCategoryChange={(next) => updateParams({ category: next, page: 1 })}
+      />
+
+      <div ref={resultsRef} className="scroll-mt-28 pt-6">
+        <div className="mb-5 flex min-h-8 flex-wrap items-center justify-between gap-3" aria-live="polite">
+          <ActiveFilters
+            search={search}
+            sort={sort}
+            onClearSearch={() => {
+              setSearchDraft("")
+              updateParams({ q: "", page: 1 })
+            }}
+            onClearSort={() => updateParams({ sort: "featured", page: 1 })}
+            onClearAll={clearAll}
           />
+          {listStatus === "succeeded" && (
+            <p className="ml-auto text-sm font-semibold text-muted-foreground">{pluralize(total, "product")}</p>
+          )}
         </div>
-        {categories.length > 0 && (
-          // Scrolls sideways on phones instead of wrapping into a tall block.
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
-            <CategoryChip active={category === ""} onClick={() => updateParams({ category: "", page: 1 })}>
-              All
-            </CategoryChip>
-            {categories.map((name) => (
-              <CategoryChip key={name} active={category === name} onClick={() => updateParams({ category: name, page: 1 })}>
-                {name}
-              </CategoryChip>
-            ))}
-          </div>
-        )}
-      </div>
 
-      {listStatus === "failed" ? (
-        <Empty className="border border-border bg-card py-16">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <RotateCwIcon />
-            </EmptyMedia>
-            <EmptyTitle>We couldn't load the shop</EmptyTitle>
-            <EmptyDescription>{listError}</EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button variant="outline" onClick={() => void loadProducts({ search, category, page })}>
+        {listStatus === "failed" ? (
+          <ShopMessage icon={RotateCwIcon} title="We couldn't load the shop" description={listError}>
+            <Button variant="clay" size="clay-sm" onClick={() => void loadProducts({ search, category, page, sort })}>
               Try again
             </Button>
-          </EmptyContent>
-        </Empty>
-      ) : isLoading && products.length === 0 ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
-          {Array.from({ length: 8 }, (_, index) => (
-            <ProductCardSkeleton key={index} />
-          ))}
-        </div>
-      ) : products.length === 0 ? (
-        <Empty className="border border-border bg-card py-16">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <PackageSearchIcon />
-            </EmptyMedia>
-            <EmptyTitle>{hasFilters ? "No products match" : "No products yet"}</EmptyTitle>
-            <EmptyDescription>
-              {hasFilters ? "Try a different search or category." : "Check back soon — new products are on the way."}
-            </EmptyDescription>
-          </EmptyHeader>
-          {hasFilters && (
-            <EmptyContent>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchDraft("")
-                  updateParams({ q: "", category: "", page: 1 })
-                }}
-              >
+          </ShopMessage>
+        ) : isLoading && products.length === 0 ? (
+          <div className={gridClasses}>
+            {Array.from({ length: 8 }, (_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <ShopMessage
+            icon={PackageSearchIcon}
+            title={hasFilters ? "No products match" : "No products yet"}
+            description={hasFilters ? "Try a different search or category." : "Check back soon — new products are on the way."}
+          >
+            {hasFilters && (
+              <Button variant="clay-secondary" size="clay-sm" onClick={clearAll}>
                 <XIcon />
                 Clear filters
               </Button>
-            </EmptyContent>
-          )}
-        </Empty>
-      ) : (
-        <>
-          <p className="mb-3 text-sm text-muted-foreground" aria-live="polite">
-            {pluralize(total, "product")}
-          </p>
-          <div
-            className={cn(
-              "grid grid-cols-2 gap-3 transition-opacity sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5",
-              isLoading && "opacity-60"
             )}
-          >
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          </ShopMessage>
+        ) : (
+          <>
+            <div className={cn(gridClasses, "transition-opacity", isLoading && "opacity-60")}>
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
 
-          {pageCount > 1 && (
-            <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-3">
-              <Button
-                variant="outline"
-                size="lg"
-                disabled={page <= 1}
-                onClick={() => updateParams({ page: page - 1 })}
-              >
-                <ChevronLeftIcon />
-                Previous
-              </Button>
-              <span className="text-sm text-muted-foreground tabular-nums">
-                Page {page} of {pageCount}
-              </span>
-              <Button
-                variant="outline"
-                size="lg"
-                disabled={page >= pageCount}
-                onClick={() => updateParams({ page: page + 1 })}
-              >
-                Next
-                <ChevronRightIcon />
-              </Button>
-            </nav>
-          )}
-        </>
-      )}
+            {pageCount > 1 && (
+              <Pagination page={page} pageCount={pageCount} total={total} pageSize={SHOP_PAGE_SIZE} onPageChange={goToPage} />
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function BreadcrumbSeparator() {
+  return (
+    <li aria-hidden>
+      <ChevronRightIcon className="size-4" />
+    </li>
+  )
+}
+
+/** Clay card for the empty and error states. */
+function ShopMessage({
+  icon,
+  title,
+  description,
+  children,
+}: {
+  icon: LucideIcon
+  title: string
+  description: string | null
+  children?: ReactNode
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 rounded-[32px] bg-card/75 px-6 py-16 text-center shadow-clay-card backdrop-blur-xl">
+      <ClayOrb icon={icon} round />
+      <div className="max-w-sm">
+        <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">{title}</h2>
+        {description && <p className="mt-2 font-medium text-muted-foreground">{description}</p>}
+      </div>
+      {children}
     </div>
   )
 }

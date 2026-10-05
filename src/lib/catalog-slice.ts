@@ -8,10 +8,29 @@ export const SHOP_PAGE_SIZE = 20
 
 type LoadStatus = "idle" | "loading" | "succeeded" | "failed"
 
+/** Shop sort orders — only what the API can sort on (name, created_at). */
+export const SHOP_SORTS = [
+  { value: "featured", label: "Featured" },
+  { value: "newest", label: "Newest" },
+  { value: "name-desc", label: "Name, Z–A" },
+] as const
+export type ShopSort = (typeof SHOP_SORTS)[number]["value"]
+
+const SORT_PARAMS: Record<ShopSort, { sortBy: "name" | "created_at"; sortDir: "asc" | "desc" }> = {
+  featured: { sortBy: "name", sortDir: "asc" },
+  newest: { sortBy: "created_at", sortDir: "desc" },
+  "name-desc": { sortBy: "name", sortDir: "desc" },
+}
+
+export function isShopSort(value: string): value is ShopSort {
+  return value in SORT_PARAMS
+}
+
 export type ProductQuery = {
   search: string
   category: string
   page: number
+  sort: ShopSort
 }
 
 type CatalogState = {
@@ -20,6 +39,9 @@ type CatalogState = {
     total: number
     status: LoadStatus
     error: string | null
+    /** The latest list request — the landing page and the shop share this list, so an older
+     *  response arriving late must not overwrite a newer query's results. */
+    requestId: string | null
   }
   /** Products fetched individually for the detail page, keyed by id. */
   byId: Record<string, ShopProduct>
@@ -28,7 +50,7 @@ type CatalogState = {
 }
 
 const initialState: CatalogState = {
-  list: { items: [], total: 0, status: "idle", error: null },
+  list: { items: [], total: 0, status: "idle", error: null, requestId: null },
   byId: {},
   detail: { status: "idle", error: null },
   categories: { items: [], status: "idle" },
@@ -44,6 +66,7 @@ export const fetchShopProducts = createAsyncThunk<Paginated<ShopProduct>, Produc
           pageSize: SHOP_PAGE_SIZE,
           search: query.search || undefined,
           category: query.category || undefined,
+          ...SORT_PARAMS[query.sort],
         },
       })
       return data
@@ -83,17 +106,20 @@ const catalogSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchShopProducts.pending, (state) => {
+      .addCase(fetchShopProducts.pending, (state, action) => {
+        state.list.requestId = action.meta.requestId
         state.list.status = "loading"
         state.list.error = null
       })
       .addCase(fetchShopProducts.fulfilled, (state, action) => {
+        for (const product of action.payload.items) state.byId[product.id] = product
+        if (action.meta.requestId !== state.list.requestId) return
         state.list.status = "succeeded"
         state.list.items = action.payload.items
         state.list.total = action.payload.total
-        for (const product of action.payload.items) state.byId[product.id] = product
       })
       .addCase(fetchShopProducts.rejected, (state, action) => {
+        if (action.meta.requestId !== state.list.requestId) return
         state.list.status = "failed"
         state.list.error = action.payload ?? "Couldn't load products."
       })

@@ -2,14 +2,17 @@ import { useCallback } from "react"
 
 import {
   SHOP_PAGE_SIZE,
+  SHOP_SORTS,
+  isShopSort,
   fetchShopCategories,
   fetchShopProduct,
   fetchShopProducts,
   type ProductQuery,
+  type ShopSort,
 } from "@/lib/catalog-slice"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 
-export { SHOP_PAGE_SIZE, type ProductQuery }
+export { SHOP_PAGE_SIZE, SHOP_SORTS, isShopSort, type ProductQuery, type ShopSort }
 
 /** Facade over the catalog slice — components read shop products through this hook only. */
 export function useCatalog() {

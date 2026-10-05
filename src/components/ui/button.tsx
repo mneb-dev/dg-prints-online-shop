@@ -23,6 +23,13 @@ const buttonVariants = cva(
         "destructive-solid":
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-3 focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        // Clay: chunky, bulging, lifts on hover and squishes when pressed. Pair with a clay-* size.
+        clay:
+          "rounded-[20px] bg-brand-gradient font-bold tracking-wide text-primary-foreground shadow-clay-button duration-200 hover:-translate-y-1 hover:shadow-clay-button-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
+        "clay-secondary":
+          "rounded-[20px] bg-card font-bold tracking-wide text-foreground shadow-clay-card duration-200 hover:-translate-y-1 hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
+        "clay-outline":
+          "rounded-[20px] border-2 border-primary/20 bg-transparent font-bold tracking-wide text-primary duration-200 hover:-translate-y-1 hover:border-primary hover:bg-primary/5 focus-visible:ring-4 focus-visible:ring-primary/30 active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
       },
       size: {
         default:
@@ -36,6 +43,9 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 pointer-coarse:size-9 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9 pointer-coarse:size-10",
+        "clay-sm": "h-11 gap-2 px-5 text-sm",
+        clay: "h-14 gap-2 px-7 text-base [&_svg:not([class*='size-'])]:size-5",
+        "clay-lg": "h-16 gap-2.5 px-8 text-lg [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {
