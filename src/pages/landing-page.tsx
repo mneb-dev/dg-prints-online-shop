@@ -5,6 +5,7 @@ import { Faq } from "@/components/landing/faq"
 import { FeaturedProducts } from "@/components/landing/featured-products"
 import { FinalCta } from "@/components/landing/final-cta"
 import { Hero } from "@/components/landing/hero"
+import { Testimonials } from "@/components/landing/testimonials"
 import { WhyDgPrints } from "@/components/landing/why-dg-prints"
 import { useCatalog } from "@/lib/catalog"
 
@@ -21,6 +22,7 @@ export function LandingPage() {
       <CategoryGrid categories={categories} loading={categoriesStatus === "idle" || categoriesStatus === "loading"} />
       <FeaturedProducts />
       <WhyDgPrints />
+      <Testimonials />
       <Faq />
       <FinalCta />
     </>
