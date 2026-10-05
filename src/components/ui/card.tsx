@@ -2,33 +2,33 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Glass-clay card: a blurred white surface floating over the background blobs. `interactive` cards
+ *  float up towards the viewer on hover. Children render above any absolutely-positioned decoration. */
 function Card({
   className,
   size = "default",
   interactive = false,
-  variant = "default",
+  children,
   ...props
 }: React.ComponentProps<"div"> & {
   size?: "default" | "sm"
   interactive?: boolean
-  /** "clay": glass-clay surface (super-rounded, blurred white over the background blobs). */
-  variant?: "default" | "clay"
 }) {
   return (
     <div
       data-slot="card"
       data-size={size}
-      data-variant={variant}
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl border border-border bg-card py-(--card-spacing) text-sm text-card-foreground shadow-[var(--shadow-soft)] transition-[translate,box-shadow] [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
-        interactive && "hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]",
-        variant === "clay" &&
-          "rounded-[32px] border-0 bg-card/70 shadow-clay-card backdrop-blur-xl duration-500 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)]",
-        variant === "clay" && interactive && "hover:-translate-y-2 hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0",
+        "group/card relative overflow-hidden clay-panel text-sm text-card-foreground transition-[translate,box-shadow] duration-500 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)] data-[size=sm]:[--card-spacing:--spacing(4)] sm:data-[size=sm]:[--card-spacing:--spacing(5)]",
+        interactive && "hover:-translate-y-2 hover:shadow-clay-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0",
         className
       )}
       {...props}
-    />
+    >
+      <div className="relative z-10 flex h-full flex-col gap-(--card-spacing) py-(--card-spacing) has-data-[slot=card-footer]:pb-0">
+        {children}
+      </div>
+    </div>
   )
 }
 
@@ -37,7 +37,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
         className
       )}
       {...props}
@@ -50,7 +50,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        "font-heading text-xl leading-snug font-extrabold tracking-tight group-data-[size=sm]/card:text-lg",
         className
       )}
       {...props}
@@ -62,7 +62,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm leading-relaxed font-medium text-muted-foreground", className)}
       {...props}
     />
   )
@@ -98,7 +98,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
+        "m-2 flex items-center clay-well p-(--card-spacing) sm:m-3",
         className
       )}
       {...props}

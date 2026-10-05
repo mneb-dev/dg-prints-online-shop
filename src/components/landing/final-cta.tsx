@@ -12,14 +12,13 @@ export function FinalCta() {
         <div aria-hidden className="pointer-events-none absolute -top-1/3 -left-1/4 size-[70%] rounded-full bg-white/20 blur-3xl" />
 
         <div className="relative mx-auto flex max-w-xl flex-col items-center gap-5">
-          <h2 id="cta-title" className="text-3xl leading-[1.1] font-black tracking-tight text-balance sm:text-5xl">
+          <h2 id="cta-title" className="text-3xl leading-[1.1] font-black tracking-tight text-balance sm:text-4xl md:text-5xl">
             Ready to print something great?
           </h2>
           <p className="text-lg leading-relaxed font-medium text-white/90">Pick your options and check out in minutes.</p>
           <div className="mt-3 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
             <Button
-              variant="clay-secondary"
-              size="clay"
+              variant="secondary"
               render={<Link to="/shop" />}
               nativeButton={false}
               className="w-full text-primary sm:w-auto"

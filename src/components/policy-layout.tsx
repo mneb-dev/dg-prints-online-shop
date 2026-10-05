@@ -26,17 +26,17 @@ export function PolicyLayout({
   }, [title])
 
   return (
-    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 sm:py-12 md:grid-cols-[12rem_minmax(0,1fr)]">
-      <nav aria-label="Policies" className="md:sticky md:top-24 md:self-start">
-        <ul className="flex gap-1 overflow-x-auto pb-1 md:flex-col md:overflow-visible">
+    <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 py-10 sm:px-6 sm:py-14 md:grid-cols-[13rem_minmax(0,1fr)]">
+      <nav aria-label="Policies" className="md:sticky md:top-28 md:self-start">
+        <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pt-1 pb-3 md:mx-0 md:flex-col md:overflow-visible md:px-0">
           {POLICY_LINKS.map((link) => (
             <li key={link.to} className="shrink-0">
               <NavLink
                 to={link.to}
                 className={({ isActive }) =>
                   cn(
-                    "block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
-                    isActive && "bg-accent text-accent-foreground hover:bg-accent"
+                    "block rounded-full px-4 py-2.5 font-heading text-sm font-extrabold whitespace-nowrap text-muted-foreground transition-[background-color,color,box-shadow] outline-none hover:bg-card hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30",
+                    isActive && "bg-card text-primary shadow-clay-card"
                   )
                 }
               >
@@ -47,11 +47,11 @@ export function PolicyLayout({
         </ul>
       </nav>
 
-      <article className="min-w-0">
-        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-        {showUpdated && <p className="mt-1 text-sm text-muted-foreground">Last updated {POLICY.lastUpdated}</p>}
-        {intro && <div className="mt-4 text-muted-foreground">{intro}</div>}
-        <div className="mt-8 flex flex-col gap-8">{children}</div>
+      <article className="clay-panel min-w-0 p-6 sm:p-10">
+        <h1 className="text-4xl leading-[1.1] font-black tracking-tight text-balance sm:text-5xl">{title}</h1>
+        {showUpdated && <p className="mt-2 text-sm font-medium text-muted-foreground">Last updated {POLICY.lastUpdated}</p>}
+        {intro && <div className="mt-5 text-lg leading-relaxed font-medium text-muted-foreground">{intro}</div>}
+        <div className="mt-10 flex flex-col gap-10">{children}</div>
       </article>
     </div>
   )
@@ -61,7 +61,7 @@ export function PolicyLayout({
 export function PolicySection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-3 text-[0.95rem] leading-relaxed [&_li]:pl-1 [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-1.5 [&_ul]:pl-5">
-      <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+      <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">{title}</h2>
       {children}
     </section>
   )
@@ -125,10 +125,10 @@ export function ContactDetails({ className }: { className?: string }) {
   if (rows.length === 0) return null
 
   return (
-    <dl className={cn("grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border", className)}>
+    <dl className={cn("grid grid-cols-1 gap-3", className)}>
       {rows.map((row) => (
-        <div key={row.label} className="flex items-start gap-3 bg-card p-4">
-          <row.icon aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <div key={row.label} className="clay-well flex items-start gap-3 p-4">
+          <row.icon aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
           <div className="min-w-0">
             <dt className="text-xs text-muted-foreground">{row.label}</dt>
             <dd className="mt-0.5 break-words">{row.value}</dd>

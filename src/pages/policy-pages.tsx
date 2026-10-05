@@ -59,11 +59,11 @@ export function ShippingPolicyPage() {
       <PolicySection title="Shipping fees">
         <p>The fee depends on the region of your delivery address and is shown at checkout before you pay.</p>
         {shipping && (
-          <dl className="grid max-w-sm grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border">
+          <dl className="grid max-w-sm grid-cols-1 gap-2">
             {REGIONS.map((region) => (
-              <div key={region} className="flex items-center justify-between gap-4 bg-card px-4 py-3">
+              <div key={region} className="clay-well flex items-center justify-between gap-4 px-4 py-3">
                 <dt>{REGION_LABELS[region]}</dt>
-                <dd className="font-medium tabular-nums">{formatCurrency(shipping.rates[region])}</dd>
+                <dd className="font-heading font-black tabular-nums">{formatCurrency(shipping.rates[region])}</dd>
               </div>
             ))}
           </dl>
@@ -367,7 +367,7 @@ export function PrivacyPage() {
           order. On a shared phone or computer, you can remove it:
         </p>
         <div>
-          <Button variant="clay-secondary" size="clay-sm" onClick={forgetDetails} disabled={forgotten}>
+          <Button variant="secondary" size="sm" onClick={forgetDetails} disabled={forgotten}>
             {forgotten ? "Saved details removed" : "Forget my details on this device"}
           </Button>
         </div>

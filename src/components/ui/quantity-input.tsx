@@ -22,11 +22,11 @@ function QuantityInput({
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
       <Button
         type="button"
-        variant="clay-secondary"
-        size="icon-sm"
+        variant="secondary"
+        size="icon"
         aria-label="Decrease quantity"
         onClick={() => step(-1)}
       >
@@ -38,13 +38,13 @@ function QuantityInput({
         step="1"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={cn("text-center", className)}
+        className={cn("h-11 w-16 min-w-16 px-2 text-center font-heading font-extrabold", className)}
         {...props}
       />
       <Button
         type="button"
-        variant="clay-secondary"
-        size="icon-sm"
+        variant="secondary"
+        size="icon"
         aria-label="Increase quantity"
         onClick={() => step(1)}
       >

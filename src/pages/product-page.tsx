@@ -48,10 +48,10 @@ function ChoiceChip({
       aria-pressed={selected}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-lg border px-3.5 text-sm font-medium transition-[background-color,border-color,color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 font-heading text-sm font-extrabold transition-[translate,box-shadow,color] duration-200 outline-none focus-visible:ring-4 focus-visible:ring-primary/30 active:scale-[0.96] motion-reduce:transition-none",
         selected
-          ? "border-primary bg-accent text-accent-foreground shadow-[var(--shadow-soft)]"
-          : "border-border bg-card hover:border-primary/40 hover:bg-muted"
+          ? "bg-brand-gradient text-primary-foreground shadow-clay-button"
+          : "bg-card text-foreground shadow-clay-card hover:-translate-y-0.5 hover:text-primary hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0"
       )}
     >
       {selected && <CheckIcon className="size-3.5" />}
@@ -75,16 +75,16 @@ function PackageTierCard({
       aria-pressed={selected}
       onClick={onSelect}
       className={cn(
-        "flex cursor-pointer flex-col items-start gap-1 rounded-xl border p-3.5 text-left transition-[background-color,border-color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "flex cursor-pointer flex-col items-start gap-1 rounded-[20px] p-4 text-left transition-[translate,box-shadow,background-color] duration-200 outline-none focus-visible:ring-4 focus-visible:ring-primary/30",
         selected
-          ? "border-primary bg-accent shadow-[var(--shadow-soft)]"
-          : "border-border bg-card hover:border-primary/40 hover:bg-muted"
+          ? "bg-accent shadow-clay-pressed ring-2 ring-primary"
+          : "bg-card shadow-clay-card hover:-translate-y-0.5 hover:shadow-clay-card-hover motion-reduce:hover:translate-y-0"
       )}
     >
       <span className={cn("text-sm font-medium", selected && "text-accent-foreground")}>
         {entry.packageName || describeAppliesTo(entry.appliesTo)}
       </span>
-      <span className="font-semibold tabular-nums">{formatCurrency(entry.price)}</span>
+      <span className="font-heading text-lg font-black tabular-nums">{formatCurrency(entry.price)}</span>
     </button>
   )
 }
@@ -196,7 +196,6 @@ function ConfigFields({
                 value={width}
                 onChange={(event) => onWidthChange(event.target.value)}
                 placeholder="e.g. 3"
-                className="h-10"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -210,7 +209,6 @@ function ConfigFields({
                 value={height}
                 onChange={(event) => onHeightChange(event.target.value)}
                 placeholder="e.g. 5"
-                className="h-10"
               />
             </div>
           </div>
@@ -218,7 +216,7 @@ function ConfigFields({
       )}
 
       {unavailable && (
-        <p className="flex items-start gap-2 rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
+        <p className="clay-well flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
           <InfoIcon className="mt-0.5 size-4 shrink-0" />
           This combination isn't available. Try a different option.
         </p>
@@ -232,7 +230,7 @@ function QuantityField({ id, value, onChange }: { id: string; value: string; onC
     <div className="flex flex-col gap-1.5">
       <Label htmlFor={id}>Quantity</Label>
       <div className="w-40">
-        <QuantityInput id={id} value={value} onChange={onChange} className="h-10" />
+        <QuantityInput id={id} value={value} onChange={onChange} />
       </div>
     </div>
   )
@@ -368,19 +366,19 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
       <NoteField value={note} onChange={setNote} />
 
       {/* Desktop keeps the button inline; below lg it lives in the MobileActionBar. */}
-      <div className="hidden gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] lg:flex lg:items-center lg:justify-between">
+      <div className="clay-panel hidden gap-4 p-6 lg:flex lg:items-center lg:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{manual ? "Price" : "Total"}</p>
           {manual ? (
             <p className="text-lg font-semibold">Price on request</p>
           ) : total !== null ? (
-            <p className="text-2xl font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+            <p className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
           ) : (
             <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
           )}
           {priceBreakdown}
         </div>
-        <Button variant="clay" size="clay-sm" className="gap-2 px-5" disabled={!canAdd} onClick={() => handleAdd()}>
+        <Button size="sm" disabled={!canAdd} onClick={() => handleAdd()}>
           <ShoppingBagIcon className="size-4" />
           Add to cart
         </Button>
@@ -398,13 +396,13 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
           ) : total !== null ? (
             <>
               <p className="text-xs text-muted-foreground">Total</p>
-              <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+              <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
             </>
           ) : (
             <StartingPrice product={product} />
           )}
         </div>
-        <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-6" onClick={handleMobileAdd}>
+        <Button size="sm" className="h-12 px-6" onClick={handleMobileAdd}>
           <ShoppingBagIcon className="size-4" />
           Add to cart
         </Button>
@@ -414,46 +412,46 @@ function ProductConfigurator({ product }: { product: ShopProduct }) {
         <SheetContent
           side="bottom"
           showCloseButton={false}
-          className="max-h-[85svh] gap-0 rounded-t-2xl p-0 duration-300 ease-out data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full motion-reduce:transition-none"
+          className="max-h-[85svh] gap-0 p-0 duration-300 ease-out data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full motion-reduce:transition-none"
         >
           <div aria-hidden className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" />
-          <SheetHeader className="flex-row items-center gap-3 border-b border-border px-4 pt-2 pb-4">
+          <SheetHeader className="flex-row items-center gap-3 border-b border-border/70 px-5 pt-2 pb-4">
             <ProductVisual
               url={product.images[0]?.url}
               alt={product.name}
               category={product.category}
-              className="size-14 shrink-0 rounded-lg"
+              className="size-14 shrink-0 rounded-2xl"
               iconClassName="size-6"
             />
             <div className="min-w-0 flex-1">
-              <SheetTitle className="truncate text-base font-semibold">{product.name}</SheetTitle>
+              <SheetTitle className="truncate text-lg font-extrabold">{product.name}</SheetTitle>
               <SheetDescription>Choose your options</SheetDescription>
             </div>
-            <SheetClose render={<Button variant="ghost" size="icon-sm" className="self-start" />}>
+            <SheetClose render={<Button variant="secondary" size="icon" className="self-start" />}>
               <XIcon />
               <span className="sr-only">Close</span>
             </SheetClose>
           </SheetHeader>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-4 py-5">
+          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-5 py-5">
             <ConfigFields {...fieldProps} idPrefix="sheet-" showRequired />
             <QuantityField id="sheet-quantity" value={quantity} onChange={setQuantity} />
           </div>
 
-          <div className="flex items-center gap-3 border-t border-border px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="flex items-center gap-3 border-t border-border/70 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             <div className="min-w-0 flex-1">
               {manual ? (
                 <p className="font-semibold">Price on request</p>
               ) : total !== null ? (
                 <>
-                  <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+                  <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
                   {priceBreakdown}
                 </>
               ) : (
                 <p className="text-sm text-muted-foreground">{hint ?? "Choose your options"}</p>
               )}
             </div>
-            <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-6" disabled={!canAdd} onClick={(event) => handleAdd(event.currentTarget)}>
+            <Button size="sm" className="h-12 px-6" disabled={!canAdd} onClick={(event) => handleAdd(event.currentTarget)}>
               <ShoppingBagIcon className="size-4" />
               Add to cart
             </Button>
@@ -498,9 +496,9 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
 
   return (
     <>
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="clay-panel flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-semibold">Made to order</p>
+          <p className="font-heading text-lg font-extrabold">Made to order</p>
           <p className="text-sm text-muted-foreground">
             {messengerUrl || isLoading
               ? "Message us to confirm the details and price."
@@ -509,7 +507,7 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
         </div>
         {messengerUrl && (
           // Below lg this button lives in the MobileActionBar instead.
-          <Button variant="clay" size="clay-sm" className="hidden gap-2 px-5 lg:inline-flex" onClick={handleMessage}>
+          <Button size="sm" className="hidden lg:inline-flex" onClick={handleMessage}>
             <MessageCircleIcon className="size-4" />
             Message us on Facebook
           </Button>
@@ -517,7 +515,7 @@ function MadeToOrderPanel({ product }: { product: ShopProduct }) {
       </div>
       {messengerUrl && (
         <MobileActionBar>
-          <Button variant="clay" size="clay-sm" className="h-12 flex-1 gap-2" onClick={handleMessage}>
+          <Button size="sm" className="h-12 flex-1" onClick={handleMessage}>
             <MessageCircleIcon className="size-4" />
             Message us on Facebook
           </Button>
@@ -540,7 +538,7 @@ export function ProductPage() {
     if (detailStatus === "failed") {
       return (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <Empty className="border border-border bg-card py-16">
+          <Empty className="py-16">
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <PackageXIcon />
@@ -549,7 +547,7 @@ export function ProductPage() {
               <EmptyDescription>{detailError}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button variant="clay-secondary" size="clay-sm" render={<Link to="/shop" />} nativeButton={false}>
+              <Button variant="secondary" size="sm" render={<Link to="/shop" />} nativeButton={false}>
                 Back to shop
               </Button>
             </EmptyContent>
@@ -559,11 +557,11 @@ export function ProductPage() {
     }
     return (
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:py-12">
-        <div className="aspect-square w-full animate-pulse rounded-2xl bg-muted" />
+        <div className="aspect-square w-full animate-pulse rounded-[32px] bg-card/60 shadow-clay-card" />
         <div className="flex flex-col gap-4">
           <div className="h-6 w-24 animate-pulse rounded-full bg-muted" />
-          <div className="h-9 w-2/3 animate-pulse rounded bg-muted" />
-          <div className="h-5 w-1/3 animate-pulse rounded bg-muted" />
+          <div className="h-9 w-2/3 animate-pulse rounded-full bg-muted" />
+          <div className="h-5 w-1/3 animate-pulse rounded-full bg-muted" />
         </div>
       </div>
     )
@@ -573,7 +571,7 @@ export function ProductPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-10">
       <Link
         to="/shop"
-        className="mb-6 inline-flex min-h-10 items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="mb-6 inline-flex min-h-11 items-center gap-1.5 rounded-full font-heading text-sm font-extrabold text-muted-foreground outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
       >
         <ArrowLeftIcon className="size-4" />
         Back to shop
@@ -584,16 +582,18 @@ export function ProductPage() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{product.category}</Badge>
+              <Badge variant="soft">
+                {product.category}
+              </Badge>
               {!product.inStock && <OutOfStockBadge />}
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{product.name}</h1>
-            {product.description && <p className="text-muted-foreground">{product.description}</p>}
-            <StartingPrice product={product} className="text-lg" />
+            <h1 className="text-4xl leading-[1.1] font-black tracking-tight text-balance sm:text-5xl">{product.name}</h1>
+            {product.description && <p className="text-lg leading-relaxed font-medium text-muted-foreground">{product.description}</p>}
+            <StartingPrice product={product} className="font-heading text-2xl [&>span:last-child]:font-black" />
           </div>
           {/* Keyed so switching products resets every choice. */}
           {!product.inStock ? (
-            <p className="flex items-start gap-2 rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+            <p className="clay-well flex items-start gap-2 p-4 text-sm font-medium text-muted-foreground">
               <InfoIcon className="mt-0.5 size-4 shrink-0" />
               This item is out of stock right now. Please check back later.
             </p>

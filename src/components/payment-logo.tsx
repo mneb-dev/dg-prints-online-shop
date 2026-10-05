@@ -22,7 +22,7 @@ export function paymentHint(type: string): string {
 export function PaymentIcon({ type, className }: { type: string; className?: string }) {
   const [failed, setFailed] = useState(false)
   const meta = PAYMENT_META[type]
-  const tile = cn("flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border", className)
+  const tile = cn("flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl shadow-clay-card", className)
 
   if (!meta || failed) {
     return (

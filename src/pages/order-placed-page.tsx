@@ -10,21 +10,21 @@ import { formatCurrency } from "@/lib/utils"
 /** The "thank you" view: after a pay-later order, or (`paid`) once a PayMongo payment is confirmed. */
 export function OrderConfirmation({ orderNumber, total, paid = false }: PlacedOrder & { paid?: boolean }) {
   return (
-    <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-16 text-center sm:px-6">
-      <div className="mb-6 flex size-16 animate-in items-center justify-center rounded-full bg-brand-gradient text-white shadow-[var(--shadow-button)] duration-300 zoom-in-50 motion-reduce:animate-none">
-        <CheckIcon className="size-8 stroke-3" />
+    <div className="clay-panel mx-4 my-10 flex max-w-xl flex-col items-center px-6 py-12 text-center sm:mx-auto sm:my-16 sm:px-10">
+      <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-clay-button animate-in duration-300 zoom-in-50 motion-reduce:animate-none">
+        <CheckIcon className="size-9 stroke-3" />
       </div>
-      <h1 className="text-3xl font-bold tracking-tight">{paid ? "Payment received!" : "Order placed!"}</h1>
-      <p className="mt-2 text-muted-foreground">Thank you for ordering from DG Prints.</p>
+      <h1 className="text-4xl leading-[1.1] font-black tracking-tight">{paid ? "Payment received!" : "Order placed!"}</h1>
+      <p className="mt-3 text-lg font-medium text-muted-foreground">Thank you for ordering from DG Prints.</p>
 
-      <dl className="mt-8 grid w-full grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border text-left">
-        <div className="bg-card p-4">
+      <dl className="mt-8 grid w-full grid-cols-2 gap-3 text-left">
+        <div className="clay-well p-4">
           <dt className="text-xs text-muted-foreground">Order number</dt>
-          <dd className="mt-0.5 text-lg font-semibold tabular-nums">{orderNumber}</dd>
+          <dd className="mt-0.5 font-heading text-xl font-black tabular-nums">{orderNumber}</dd>
         </div>
-        <div className="bg-card p-4">
+        <div className="clay-well p-4">
           <dt className="text-xs text-muted-foreground">{paid ? "Amount paid" : "Total"}</dt>
-          <dd className="mt-0.5 text-lg font-semibold tabular-nums">{formatCurrency(total)}</dd>
+          <dd className="mt-0.5 font-heading text-xl font-black tabular-nums">{formatCurrency(total)}</dd>
         </div>
       </dl>
 
@@ -34,7 +34,7 @@ export function OrderConfirmation({ orderNumber, total, paid = false }: PlacedOr
           : "We'll message or call you to confirm your order and arrange payment. Keep your order number handy."}
       </p>
 
-      <Button variant="clay" size="clay-sm" className="mt-8 px-6" render={<Link to="/shop" />} nativeButton={false}>
+      <Button size="sm" className="mt-8 px-6" render={<Link to="/shop" />} nativeButton={false}>
         Continue shopping
       </Button>
     </div>

@@ -60,7 +60,7 @@ function LineNote({ line }: { line: CartLine }) {
 
   if (line.note) {
     return (
-      <div className="mt-2 flex items-start gap-1 rounded-lg bg-muted/60 px-2.5 py-1.5 text-sm">
+      <div className="clay-well mt-2 flex items-start gap-1 px-3.5 py-2.5 text-sm">
         <p className="min-w-0 flex-1 whitespace-pre-line break-words">
           <span className="font-medium">Note: </span>
           {line.note}
@@ -82,7 +82,7 @@ function LineNote({ line }: { line: CartLine }) {
     <button
       type="button"
       onClick={startEditing}
-      className="mt-1.5 inline-flex min-h-8 cursor-pointer items-center gap-1 rounded-md text-sm font-medium text-primary outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="mt-1.5 inline-flex min-h-9 cursor-pointer items-center gap-1 rounded-full text-sm font-bold text-primary outline-none hover:underline focus-visible:ring-4 focus-visible:ring-primary/30"
     >
       <PlusIcon className="size-3.5" />
       Add note
@@ -96,19 +96,19 @@ function CartLineItem({ line }: { line: CartLine }) {
   const details = itemDetails(line)
 
   return (
-    <li className="flex gap-4 py-5 first:pt-0 last:pb-0">
-      <Link to={`/shop/${line.productId}`} className="shrink-0 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+    <li className="flex gap-4 py-6 first:pt-0 last:pb-0">
+      <Link to={`/shop/${line.productId}`} className="shrink-0 rounded-[20px] outline-none focus-visible:ring-4 focus-visible:ring-primary/30">
         <ProductVisual
           url={line.imageUrl}
           alt={line.productName}
           category={line.category}
-          className="size-20 rounded-lg sm:size-24"
+          className="size-20 rounded-[20px] shadow-clay-card sm:size-24"
           iconClassName="size-8"
         />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <Link to={`/shop/${line.productId}`} className="font-semibold hover:underline">
+          <Link to={`/shop/${line.productId}`} className="font-heading text-lg font-extrabold hover:text-primary">
             {line.productName}
           </Link>
           {details.length > 0 && (
@@ -130,11 +130,11 @@ function CartLineItem({ line }: { line: CartLine }) {
           <LineNote line={line} />
         </div>
         <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
-          <p className="order-2 font-semibold tabular-nums sm:order-1">
+          <p className="order-2 font-heading text-lg font-black tabular-nums sm:order-1">
             {total === null ? <span className="text-sm font-medium text-muted-foreground">Quote needed</span> : formatCurrency(total)}
           </p>
           <div className="order-1 flex items-center gap-2 sm:order-2">
-            <div className="w-32">
+            <div>
               <QuantityInput
                 aria-label={`Quantity for ${line.productName}`}
                 value={String(line.quantity)}
@@ -142,7 +142,6 @@ function CartLineItem({ line }: { line: CartLine }) {
                   const next = Number(value)
                   if (Number.isFinite(next) && next >= 1) setQuantity(line.key, next)
                 }}
-                className="h-9"
               />
             </div>
             <Button
@@ -165,8 +164,8 @@ function OrderSummary() {
   const { subtotal, itemCount, quoteLineCount, clear } = useCart()
 
   return (
-    <aside className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] lg:sticky lg:top-24">
-      <h2 className="text-lg font-semibold">Order summary</h2>
+    <aside className="clay-panel flex flex-col gap-4 p-6 lg:sticky lg:top-28">
+      <h2 className="text-xl font-extrabold">Order summary</h2>
       <dl className="flex flex-col gap-2 text-sm">
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Items</dt>
@@ -185,8 +184,8 @@ function OrderSummary() {
       </dl>
       <Separator />
       <div className="flex items-baseline justify-between">
-        <span className="font-semibold">Estimated total</span>
-        <span className="text-2xl font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</span>
+        <span className="font-heading font-extrabold">Estimated total</span>
+        <span className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(subtotal)}</span>
       </div>
       <p className="flex items-start gap-2 text-xs text-muted-foreground">
         <InfoIcon className="mt-px size-3.5 shrink-0" />
@@ -196,15 +195,15 @@ function OrderSummary() {
       </p>
       <div className="flex flex-col gap-2">
         {/* Below lg this button lives in MobileCheckoutBar instead. */}
-        <Button variant="clay" size="clay-sm" className="hidden lg:inline-flex" render={<Link to="/checkout" />} nativeButton={false}>
+        <Button size="sm" className="hidden lg:inline-flex" render={<Link to="/checkout" />} nativeButton={false}>
           Proceed to checkout
           <ArrowRightIcon />
         </Button>
-        <Button variant="clay-secondary" size="clay-sm" render={<Link to="/shop" />} nativeButton={false}>
+        <Button variant="secondary" size="sm" render={<Link to="/shop" />} nativeButton={false}>
           <ArrowLeftIcon />
           Continue shopping
         </Button>
-        <Button variant="ghost" size="lg" className="h-11 text-muted-foreground hover:text-destructive" onClick={clear}>
+        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive" onClick={clear}>
           <Trash2Icon />
           Clear cart
         </Button>
@@ -224,9 +223,9 @@ function MobileCheckoutBar() {
           Estimated total · {pluralize(itemCount, "item")}
           {quoteLineCount > 0 && " + quote"}
         </p>
-        <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
+        <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(subtotal)}</p>
       </div>
-      <Button variant="clay" size="clay-sm" className="h-12 gap-2 px-5" render={<Link to="/checkout" />} nativeButton={false}>
+      <Button size="sm" className="h-12" render={<Link to="/checkout" />} nativeButton={false}>
         Checkout
         <ArrowRightIcon />
       </Button>
@@ -240,7 +239,7 @@ export function CartPage() {
   if (lineCount === 0) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <Empty className="border border-border bg-card py-16">
+        <Empty className="py-16">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <ShoppingBagIcon />
@@ -249,7 +248,7 @@ export function CartPage() {
             <EmptyDescription>Browse the shop and add products to build your order.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant="clay" size="clay-sm" className="px-5" render={<Link to="/shop" />} nativeButton={false}>
+            <Button size="sm" render={<Link to="/shop" />} nativeButton={false}>
               Shop now
             </Button>
           </EmptyContent>
@@ -260,10 +259,10 @@ export function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-      <h1 className="mb-6 text-3xl font-bold tracking-tight">Your cart</h1>
+      <h1 className="mb-8 text-4xl leading-[1.1] font-black tracking-tight sm:text-5xl">Your cart</h1>
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-8">
-        <section aria-label="Cart items" className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:p-6">
-          <ul className="divide-y divide-border">
+        <section aria-label="Cart items" className="clay-panel p-5 sm:p-8">
+          <ul className="divide-y divide-border/70">
             {lines.map((line) => (
               <CartLineItem key={line.key} line={line} />
             ))}

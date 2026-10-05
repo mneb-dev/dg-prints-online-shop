@@ -9,7 +9,7 @@ export function MobileActionBar({ children, className }: { children: ReactNode; 
   return (
     <div
       data-mobile-action-bar
-      className="fixed inset-x-0 bottom-0 z-40 animate-in border-t border-border/70 bg-background/90 shadow-[0_-4px_16px_-8px_rgb(0_0_0/0.15)] backdrop-blur-md duration-300 slide-in-from-bottom-4 fade-in-0 supports-[backdrop-filter]:bg-background/80 motion-reduce:animate-none lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 animate-in rounded-t-[28px] bg-card/85 shadow-[0_-12px_32px_-12px_rgb(124_58_237/0.25)] backdrop-blur-xl duration-300 slide-in-from-bottom-4 fade-in-0 motion-reduce:animate-none lg:hidden"
     >
       <div
         className={cn(

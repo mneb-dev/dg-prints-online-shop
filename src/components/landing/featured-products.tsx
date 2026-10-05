@@ -30,7 +30,7 @@ export function FeaturedProducts() {
           : products.slice(0, FEATURED_COUNT).map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
       <div className="mt-12 flex justify-center">
-        <Button variant="clay-secondary" size="clay" render={<Link to="/shop" />} nativeButton={false}>
+        <Button variant="secondary" render={<Link to="/shop" />} nativeButton={false}>
           View all products
           <ArrowRightIcon />
         </Button>

@@ -3,47 +3,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+// Clay buttons: chunky, super-rounded, lift on hover and squish when pressed. Every variant shares
+// the physics; only the surface changes. All sizes meet the 44px touch target.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-[20px] border border-transparent bg-clip-padding font-bold tracking-wide whitespace-nowrap transition-[translate,scale,box-shadow,background-color,color,border-color] duration-200 outline-none select-none hover:-translate-y-1 focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.92] active:not-aria-[haspopup]:translate-y-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-4 aria-invalid:ring-destructive/25 motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-[var(--shadow-button)] transition-[transform,box-shadow,background-color] hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[var(--shadow-elevated)]",
-        gradient:
-          "bg-brand-gradient text-primary-foreground shadow-[var(--shadow-button)] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]",
-        outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "bg-brand-gradient text-primary-foreground shadow-clay-button hover:shadow-clay-button-hover active:shadow-clay-pressed",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-card text-foreground shadow-clay-card hover:shadow-clay-card-hover active:shadow-clay-pressed aria-expanded:bg-clay-well aria-expanded:shadow-clay-pressed",
+        outline:
+          "border-2 border-primary/20 bg-transparent text-primary hover:border-primary hover:bg-primary/5 aria-expanded:border-primary aria-expanded:bg-primary/5",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "text-foreground hover:bg-primary/10 hover:text-primary aria-expanded:bg-primary/10 aria-expanded:text-primary",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        "destructive-solid":
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-3 focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
-        // Clay: chunky, bulging, lifts on hover and squishes when pressed. Pair with a clay-* size.
-        clay:
-          "rounded-[20px] bg-brand-gradient font-bold tracking-wide text-primary-foreground shadow-clay-button duration-200 hover:-translate-y-1 hover:shadow-clay-button-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
-        "clay-secondary":
-          "rounded-[20px] bg-card font-bold tracking-wide text-foreground shadow-clay-card duration-200 hover:-translate-y-1 hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:not-aria-[haspopup]:translate-y-0 active:scale-[0.92] active:shadow-clay-pressed motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100",
+          "bg-destructive/10 text-destructive hover:bg-destructive/15 focus-visible:ring-destructive/25 active:shadow-clay-pressed",
       },
       size: {
-        default:
-          "h-8 gap-1.5 px-2.5 pointer-coarse:h-10 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 pointer-coarse:h-8 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 pointer-coarse:h-9 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 pointer-coarse:h-10 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-8 pointer-coarse:size-10",
-        "icon-xs":
-          "size-6 pointer-coarse:size-8 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 pointer-coarse:size-9 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9 pointer-coarse:size-10",
-        "clay-sm": "h-11 gap-2 px-5 text-sm",
-        clay: "h-14 gap-2 px-7 text-base [&_svg:not([class*='size-'])]:size-5",
-        "clay-lg": "h-16 gap-2.5 px-8 text-lg [&_svg:not([class*='size-'])]:size-5",
+        sm: "h-11 gap-2 px-5 text-sm [&_svg:not([class*='size-'])]:size-4",
+        default: "h-14 gap-2 px-7 text-base",
+        lg: "h-16 gap-2.5 px-8 text-lg",
+        icon: "size-11 rounded-full",
+        "icon-sm": "size-11 rounded-2xl [&_svg:not([class*='size-'])]:size-4",
       },
     },
     defaultVariants: {

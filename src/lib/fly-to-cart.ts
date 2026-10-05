@@ -38,7 +38,7 @@ export function flyToCart({ from, imageUrl }: { from: HTMLElement; imageUrl?: st
   const flyer = document.createElement("div")
   flyer.setAttribute("aria-hidden", "true")
   flyer.className =
-    "pointer-events-none fixed z-[100] flex items-center justify-center overflow-hidden rounded-full bg-brand-gradient text-white shadow-[var(--shadow-elevated)] ring-2 ring-background"
+    "pointer-events-none fixed z-[100] flex items-center justify-center overflow-hidden rounded-full bg-brand-gradient text-white shadow-clay-button ring-2 ring-background"
   Object.assign(flyer.style, {
     left: `${startX - SIZE / 2}px`,
     top: `${startY - SIZE / 2}px`,

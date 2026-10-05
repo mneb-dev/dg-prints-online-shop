@@ -20,12 +20,15 @@ export function ClayOrb({
   icon: Icon,
   hue = "violet",
   round = false,
+  breathe = false,
   className,
   iconClassName,
 }: {
   icon: ComponentType<LucideProps>
   hue?: OrbHue
   round?: boolean
+  /** Slow inflate/deflate, for stat-style orbs that should feel alive. */
+  breathe?: boolean
   className?: string
   iconClassName?: string
 }) {
@@ -36,6 +39,7 @@ export function ClayOrb({
         "flex size-14 shrink-0 items-center justify-center bg-gradient-to-br text-white shadow-clay-button",
         round ? "rounded-full" : "rounded-2xl",
         ORB_HUES[hue],
+        breathe && "animate-clay-breathe",
         className
       )}
     >

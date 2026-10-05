@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: ShopProduct }) {
   return (
     <Link
       to={`/shop/${product.id}`}
-      className="group/product flex flex-col rounded-[24px] bg-card/80 p-2 text-card-foreground shadow-clay-card backdrop-blur-xl transition-[translate,box-shadow] duration-500 outline-none hover:-translate-y-1 hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 sm:rounded-[32px] sm:p-2.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="group/product flex flex-col rounded-[24px] bg-card/80 p-2 text-card-foreground shadow-clay-card backdrop-blur-xl transition-[translate,box-shadow] duration-500 outline-none hover:-translate-y-2 hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30 sm:rounded-[32px] sm:p-2.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[18px] sm:rounded-[24px]">
         <ProductVisual
@@ -51,7 +51,6 @@ export function ProductCard({ product }: { product: ShopProduct }) {
             ))}
           </div>
         )}
-
       </div>
       <div className="flex flex-1 flex-col gap-2 px-2 pt-3 pb-2 sm:px-3 sm:pt-4 sm:pb-3">
         <p className="truncate text-xs font-semibold text-muted-foreground">{product.category}</p>
@@ -69,20 +68,14 @@ export function ProductCard({ product }: { product: ShopProduct }) {
   )
 }
 
-const BADGE_STYLES: Record<string, string> = {
-  "Out of stock": "bg-foreground text-background",
-  New: "bg-primary text-primary-foreground",
+const BADGE_VARIANTS: Record<string, "ink" | "default"> = {
+  "Out of stock": "ink",
+  New: "default",
 }
 
 function ProductBadge({ label }: { label: string }) {
   return (
-    <Badge
-      variant="plain"
-      className={cn(
-        "h-6 rounded-full px-2.5 font-semibold",
-        BADGE_STYLES[label] ?? "bg-card/90 text-foreground backdrop-blur-md"
-      )}
-    >
+    <Badge variant={BADGE_VARIANTS[label] ?? "glass"} className="h-6 px-2.5">
       {label}
     </Badge>
   )
@@ -90,7 +83,7 @@ function ProductBadge({ label }: { label: string }) {
 
 export function OutOfStockBadge({ className }: { className?: string }) {
   return (
-    <Badge variant="secondary" className={cn("rounded-full bg-foreground px-2.5 font-bold text-background", className)}>
+    <Badge variant="ink" className={className}>
       Out of stock
     </Badge>
   )

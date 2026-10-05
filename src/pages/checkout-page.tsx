@@ -13,11 +13,12 @@ import {
 } from "lucide-react"
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom"
 
+import { ClayOrb } from "@/components/clay-orb"
 import { MobileActionBar } from "@/components/mobile-action-bar"
 import { PaymentIcon, paymentHint } from "@/components/payment-logo"
 import { ProductVisual } from "@/components/product-image"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { fieldClassName, Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
@@ -95,9 +96,9 @@ function FormField({
 
 function Section({ icon: Icon, title, children }: { icon: typeof UserIcon; title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-        <Icon className="size-5 text-primary" />
+    <section className="clay-panel p-5 sm:p-8">
+      <h2 className="mb-5 flex items-center gap-3 text-xl font-extrabold">
+        <ClayOrb icon={Icon} round className="size-10" iconClassName="size-5" />
         {title}
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
@@ -164,7 +165,6 @@ export function CheckoutPage() {
     onBlur: () => setTouched((prev) => ({ ...prev, [key]: true })),
     "aria-invalid": !!visibleError(key) || undefined,
     "aria-describedby": visibleError(key) ? `checkout-${key}-error` : undefined,
-    className: "h-11",
   })
 
   async function handleSubmit(event?: React.FormEvent) {
@@ -215,15 +215,15 @@ export function CheckoutPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <Link
         to="/cart"
-        className="mb-4 inline-flex min-h-10 items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-full font-heading text-sm font-extrabold text-muted-foreground outline-none hover:text-primary focus-visible:ring-4 focus-visible:ring-primary/30"
       >
         <ArrowLeftIcon className="size-4" />
         Back to cart
       </Link>
-      <h1 className="mb-6 text-3xl font-bold tracking-tight">Checkout</h1>
+      <h1 className="mb-8 text-4xl leading-[1.1] font-black tracking-tight sm:text-5xl">Checkout</h1>
 
       {paymentCancelled && !submitError && (
-        <div role="status" className="mb-6 flex items-start gap-3 rounded-xl border border-border bg-muted/50 p-4 text-sm">
+        <div role="status" className="clay-well mb-6 flex items-start gap-3 p-4 text-sm">
           <InfoIcon className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="flex-1">
             <span className="font-medium">Payment cancelled.</span>{" "}
@@ -233,7 +233,7 @@ export function CheckoutPage() {
             type="button"
             aria-label="Dismiss"
             onClick={() => setSearchParams({}, { replace: true })}
-            className="-m-1 rounded-md p-1 text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="-m-1 rounded-full p-1.5 text-muted-foreground outline-none hover:bg-card hover:text-foreground focus-visible:ring-4 focus-visible:ring-primary/30"
           >
             <XIcon className="size-4" />
           </button>
@@ -241,7 +241,7 @@ export function CheckoutPage() {
       )}
 
       {submitError && (
-        <div role="alert" className="mb-6 flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
+        <div role="alert" className="mb-6 flex items-start gap-3 rounded-[20px] bg-destructive/10 p-4 text-sm">
           <AlertCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
           <div className="flex flex-col gap-1">
             <p className="font-medium">{submitError.message}</p>
@@ -331,7 +331,8 @@ export function CheckoutPage() {
                   aria-invalid={!!visibleError("province") || undefined}
                   aria-describedby={visibleError("province") ? "checkout-province-error" : undefined}
                   className={cn(
-                    "h-11 w-full cursor-pointer appearance-none rounded-lg border border-input bg-transparent pr-9 pl-2.5 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30",
+                    fieldClassName,
+                    "h-14 cursor-pointer appearance-none pr-11",
                     !form.province && "text-muted-foreground"
                   )}
                 >
@@ -350,7 +351,7 @@ export function CheckoutPage() {
                     </optgroup>
                   ))}
                 </select>
-                <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-5 size-4 -translate-y-1/2 text-muted-foreground" />
               </div>
             </FormField>
             <FormField id="checkout-zip" label="ZIP code" optional error={visibleError("zip")}>
@@ -361,7 +362,7 @@ export function CheckoutPage() {
           {needsPayment && (
             <Section icon={WalletIcon} title="Payment method">
               {/* Radio cards: the whole card is the click target, a native radio (visually hidden) keeps
-                  keyboard/screen-reader behaviour, and the selected card gets the primary border + check. */}
+                  keyboard/screen-reader behaviour, and the selected card presses in with a violet ring + check. */}
               <div role="radiogroup" aria-label="Payment method" className="grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2">
                 {paymentMethods.map((method) => {
                   const checked = method.type === paymentMethod?.type
@@ -369,8 +370,8 @@ export function CheckoutPage() {
                     <label
                       key={method.type}
                       className={cn(
-                        "flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border border-input bg-card p-3 transition-colors hover:border-primary/50 has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
-                        checked && "border-primary bg-primary/5 ring-1 ring-primary hover:border-primary"
+                        "flex min-h-16 cursor-pointer items-center gap-3 rounded-[20px] bg-card p-4 shadow-clay-card transition-[translate,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-clay-card-hover has-focus-visible:ring-4 has-focus-visible:ring-primary/30 motion-reduce:hover:translate-y-0",
+                        checked && "bg-accent shadow-clay-pressed ring-2 ring-primary hover:translate-y-0 hover:shadow-clay-pressed"
                       )}
                     >
                       <input
@@ -383,14 +384,14 @@ export function CheckoutPage() {
                       />
                       <PaymentIcon type={method.type} />
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="font-medium">{method.label}</span>
+                        <span className="font-heading font-extrabold">{method.label}</span>
                         <span className="text-xs text-muted-foreground">{paymentHint(method.type)}</span>
                       </span>
                       <span
                         aria-hidden
                         className={cn(
                           "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                          checked ? "border-primary bg-primary text-primary-foreground" : "border-input"
+                          checked ? "border-primary bg-primary text-primary-foreground" : "border-input bg-card"
                         )}
                       >
                         {checked && <CheckIcon className="size-3 stroke-3" />}
@@ -425,8 +426,8 @@ export function CheckoutPage() {
           </div>
         </div>
 
-        <aside className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] lg:sticky lg:top-24">
-          <h2 className="text-lg font-semibold">Order summary</h2>
+        <aside className="clay-panel flex flex-col gap-4 p-6 lg:sticky lg:top-28">
+          <h2 className="text-xl font-extrabold">Order summary</h2>
           <ul className="flex flex-col gap-3">
             {lines.map((line) => {
               const lineAmount = lineTotal(line)
@@ -434,7 +435,7 @@ export function CheckoutPage() {
                 <li
                   key={line.key}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg",
+                    "flex items-center gap-3 rounded-2xl",
                     line.key === submitError?.lineKey && "ring-2 ring-destructive/50 ring-offset-4 ring-offset-card"
                   )}
                 >
@@ -442,14 +443,14 @@ export function CheckoutPage() {
                     url={line.imageUrl}
                     alt={line.productName}
                     category={line.category}
-                    className="size-12 shrink-0 rounded-lg"
+                    className="size-12 shrink-0 rounded-2xl shadow-clay-card"
                     iconClassName="size-5"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{line.productName}</p>
+                    <p className="truncate font-heading text-sm font-extrabold">{line.productName}</p>
                     <p className="text-xs text-muted-foreground">Qty {line.quantity}</p>
                   </div>
-                  <p className="text-sm font-medium tabular-nums">
+                  <p className="font-heading text-sm font-black tabular-nums">
                     {lineAmount === null ? <span className="text-xs text-muted-foreground">Quote</span> : formatCurrency(lineAmount)}
                   </p>
                 </li>
@@ -479,8 +480,8 @@ export function CheckoutPage() {
           </dl>
           <Separator />
           <div className="flex items-baseline justify-between">
-            <span className="font-semibold">Total</span>
-            <span className="text-2xl font-bold tracking-tight tabular-nums">{formatCurrency(total)}</span>
+            <span className="font-heading font-extrabold">Total</span>
+            <span className="font-heading text-3xl font-black tracking-tight tabular-nums">{formatCurrency(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">
             {quoteLineCount > 0
@@ -505,7 +506,7 @@ export function CheckoutPage() {
             </Link>
             .
           </p>
-          <Button type="submit" variant="clay" size="clay-sm" className="hidden h-12 gap-2 lg:inline-flex" disabled={!canSubmit}>
+          <Button type="submit" size="sm" className="hidden h-12 lg:inline-flex" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>
@@ -514,9 +515,9 @@ export function CheckoutPage() {
         <MobileActionBar>
           <div className="min-w-0 flex-1">
             <p className="text-xs text-muted-foreground">{shippingFee === null ? "Total before shipping" : "Total"}</p>
-            <p className="text-lg leading-tight font-bold tracking-tight tabular-nums">{formatCurrency(total)}</p>
+            <p className="font-heading text-xl leading-tight font-black tracking-tight tabular-nums">{formatCurrency(total)}</p>
           </div>
-          <Button type="submit" variant="clay" size="clay-sm" className="h-12 gap-2 px-5" disabled={!canSubmit}>
+          <Button type="submit" size="sm" className="h-12" disabled={!canSubmit}>
             {busy ? <Spinner /> : <LockIcon />}
             {submitLabel}
           </Button>

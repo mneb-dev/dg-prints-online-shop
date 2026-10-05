@@ -76,13 +76,14 @@ export function ShopToolbar({
         >
           <SelectTrigger
             aria-label="Sort products"
-            className="h-11! shrink-0 cursor-pointer gap-1.5 rounded-full border-0 bg-card px-4 font-heading text-sm font-extrabold shadow-clay-card transition-shadow hover:shadow-clay-card-hover focus-visible:ring-4 focus-visible:ring-primary/30"
+            // A raised pill rather than the default recessed field: it sits in the toolbar, not a form.
+            className="h-11 w-auto shrink-0 gap-1.5 rounded-full bg-card px-4 font-heading text-sm font-extrabold shadow-clay-card hover:shadow-clay-card-hover"
           >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent align="end" alignItemWithTrigger={false} className="rounded-2xl border border-border p-1 shadow-clay-card">
+          <SelectContent align="end" alignItemWithTrigger={false}>
             {SHOP_SORTS.map((option) => (
-              <SelectItem key={option.value} value={option.value} className="h-10 rounded-xl px-3 font-medium">
+              <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
             ))}

@@ -32,7 +32,7 @@ export function ProductGallery({ product, className }: { product: ShopProduct; c
         alt={images.length > 1 ? `${product.name} — image ${selectedIndex + 1} of ${images.length}` : product.name}
         category={product.category}
         eager
-        className="aspect-[4/3] w-full rounded-2xl shadow-[var(--shadow-elevated)] lg:aspect-square"
+        className="aspect-[4/3] w-full rounded-[32px] shadow-clay-card lg:aspect-square"
         iconClassName="size-20 sm:size-24"
       />
       {images.length > 1 && (
@@ -40,7 +40,7 @@ export function ProductGallery({ product, className }: { product: ShopProduct; c
           role="tablist"
           aria-label={`${product.name} images`}
           onKeyDown={handleKeyDown}
-          className="-mx-1 flex gap-2 overflow-x-auto px-1 pt-1 pb-2 [scrollbar-width:thin]"
+          className="-mx-2 flex gap-3 overflow-x-auto px-2 pt-2 pb-3 [scrollbar-width:thin]"
         >
           {images.map((image, index) => {
             const isSelected = index === selectedIndex
@@ -57,8 +57,8 @@ export function ProductGallery({ product, className }: { product: ShopProduct; c
                 tabIndex={isSelected ? 0 : -1}
                 onClick={() => setSelectedIndex(index)}
                 className={cn(
-                  "size-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 bg-muted transition-[border-color,opacity] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:size-20",
-                  isSelected ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
+                  "size-16 shrink-0 cursor-pointer overflow-hidden rounded-2xl bg-muted shadow-clay-card transition-[translate,opacity,box-shadow] outline-none focus-visible:ring-4 focus-visible:ring-primary/30 sm:size-20",
+                  isSelected ? "ring-3 ring-primary" : "opacity-70 hover:-translate-y-0.5 hover:opacity-100"
                 )}
               >
                 <img src={image.url} alt="" loading="lazy" decoding="async" className="size-full object-cover" />

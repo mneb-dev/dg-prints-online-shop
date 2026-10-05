@@ -63,64 +63,70 @@ export function CheckoutReturnPage() {
   const stillChecking = view.kind === "checking" || (view.kind === "status" && view.status === "pending" && polling)
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-16 text-center sm:px-6">
+    <div className="clay-panel mx-4 my-10 flex max-w-xl flex-col items-center px-6 py-12 text-center sm:mx-auto sm:my-16 sm:px-10">
       {stillChecking ? (
         <>
           <Spinner className="mb-6 size-10 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight">Confirming your payment…</h1>
-          <p className="mt-2 text-muted-foreground">This only takes a few seconds. Please don't close this page.</p>
+          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">Confirming your payment…</h1>
+          <p className="mt-3 font-medium text-muted-foreground">This only takes a few seconds. Please don't close this page.</p>
         </>
       ) : view.kind === "status" && view.status === "pending" ? (
         <>
-          <ClockIcon className="mb-6 size-12 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight">We haven't received your payment yet</h1>
-          <p className="mt-2 text-muted-foreground">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-violet-600 text-white shadow-clay-button">
+            <ClockIcon className="size-9" />
+          </span>
+          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">We haven't received your payment yet</h1>
+          <p className="mt-3 font-medium text-muted-foreground">
             If you already paid, it can take a moment to come through — check again shortly. Otherwise you can go
             back and finish paying.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button variant="clay" size="clay-sm" className="px-6" onClick={checkAgain}>
+            <Button size="sm" className="px-6" onClick={checkAgain}>
               Check again
             </Button>
-            <Button variant="clay-secondary" size="clay-sm" className="px-6" render={<a href={view.checkoutUrl} />} nativeButton={false}>
+            <Button variant="secondary" size="sm" className="px-6" render={<a href={view.checkoutUrl} />} nativeButton={false}>
               Return to payment
             </Button>
           </div>
         </>
       ) : view.kind === "status" && view.status === "failed" ? (
         <>
-          <XCircleIcon className="mb-6 size-12 text-destructive" />
-          <h1 className="text-2xl font-bold tracking-tight">Payment wasn't completed</h1>
-          <p className="mt-2 text-muted-foreground">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white shadow-clay-button">
+            <XCircleIcon className="size-9" />
+          </span>
+          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">Payment wasn't completed</h1>
+          <p className="mt-3 font-medium text-muted-foreground">
             The payment was cancelled or didn't go through, so you weren't charged and no order was placed. Your cart
             is still here — you can try again.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button variant="clay" size="clay-sm" className="px-6" render={<Link to="/checkout" />} nativeButton={false}>
+            <Button size="sm" className="px-6" render={<Link to="/checkout" />} nativeButton={false}>
               Back to checkout
             </Button>
           </div>
         </>
       ) : (
         <>
-          <XCircleIcon className="mb-6 size-12 text-destructive" />
-          <h1 className="text-2xl font-bold tracking-tight">
+          <span className="mb-6 flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white shadow-clay-button">
+            <XCircleIcon className="size-9" />
+          </span>
+          <h1 className="text-3xl leading-[1.1] font-black tracking-tight sm:text-4xl">
             {view.kind === "error" ? "Couldn't check your payment" : "This payment link has expired"}
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-3 font-medium text-muted-foreground">
             {view.kind === "error"
               ? view.message
               : "No order was placed and you weren't charged. Your cart is still saved — check out again to pay."}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             {view.kind === "error" && (
-              <Button variant="clay" size="clay-sm" className="px-6" onClick={checkAgain}>
+              <Button size="sm" className="px-6" onClick={checkAgain}>
                 Try again
               </Button>
             )}
             <Button
-              variant={view.kind === "error" ? "clay-secondary" : "clay"}
-              size="clay-sm"
+              variant={view.kind === "error" ? "secondary" : "default"}
+              size="sm"
               className="px-6"
               render={<Link to="/cart" />}
               nativeButton={false}

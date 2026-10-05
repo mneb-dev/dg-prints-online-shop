@@ -152,7 +152,7 @@ export function ShopPage() {
 
         {listStatus === "failed" ? (
           <ShopMessage icon={RotateCwIcon} title="We couldn't load the shop" description={listError}>
-            <Button variant="clay" size="clay-sm" onClick={() => void loadProducts({ search, category, page, sort })}>
+            <Button size="sm" onClick={() => void loadProducts({ search, category, page, sort })}>
               Try again
             </Button>
           </ShopMessage>
@@ -169,7 +169,7 @@ export function ShopPage() {
             description={hasFilters ? "Try a different search or category." : "Check back soon — new products are on the way."}
           >
             {hasFilters && (
-              <Button variant="clay-secondary" size="clay-sm" onClick={clearAll}>
+              <Button variant="secondary" size="sm" onClick={clearAll}>
                 <XIcon />
                 Clear filters
               </Button>
